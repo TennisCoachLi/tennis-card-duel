@@ -118,8 +118,10 @@ npx serve .
 
 然后打开 <http://localhost:8000>。
 
-> 直接双击 `index.html` 也能打开，但浏览器的 `file://` 协议会限制
-> `mask-image` 加载外部 SVG，所以建议用本地服务器。
+> 也可以直接双击 `index.html` 打开。
+> 45 个图标都以 **data URI 内嵌在 HTML 里**（`ICON_URI`），
+> 所以 `file://` 协议下同样能正常显示 —— 不会因为浏览器拦截外部
+> `mask-image` 而只看到空底砖。
 
 ---
 
