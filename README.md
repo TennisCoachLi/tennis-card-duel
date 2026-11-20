@@ -10,7 +10,7 @@
   <img src="og-cover.png" width="640" alt="卡中探技 · 网球技能卡">
 </p>
 
-**在线体验**：<https://tenniscoachli.github.io/card-duel/>
+**在线体验**：<https://tenniscoachli.github.io/tennis-card-duel/>
 
 ---
 
@@ -133,6 +133,7 @@ npx serve .
 ├── og-cover.png        # 社交分享封面
 ├── .github/workflows/
 │   └── pages.yml       # GitHub Pages 自动部署
+├── deploy.sh           # 一键建仓 + 推送 + 开 Pages
 └── LICENSE             # MIT
 ```
 
