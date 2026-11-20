@@ -408,7 +408,6 @@
             display: flex;
             align-items: stretch;
             justify-content: center;
-            perspective: 1400px;
         }
         .stage > * {
             width: 100%;
@@ -503,17 +502,34 @@
         }
         .skill-card.flipping .spark { animation: sparkOut .7s ease-out both; }
 
-        /* 放大查看 */
-        .skill-card.zoomed {
+        /* ========== 放大查看 ==========
+           放大态放在独立的全屏遮罩里，完全脱离 .stage 的 grid 与 perspective。
+           （原卡片的 position:fixed 会受 .stage 的 perspective 影响，
+             top:50% 变成相对 stage 而非视口，导致放大后错位重叠。） */
+        .zoom-overlay {
+            display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: min(92vw, 440px);
-            max-width: 440px;
-            z-index: 60;
-            box-shadow: 0 24px 60px -20px rgba(28, 28, 30, .6);
-            cursor: zoom-out;
+            inset: 0;
+            z-index: 200;
+            background: rgba(28, 28, 30, .55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .zoom-overlay.active { display: flex; }
+        .zoom-overlay .card {
+            width: min(92vw, 420px);
+            max-width: 420px;
+            flex: none;
+            box-shadow: 0 28px 64px -18px rgba(0, 0, 0, .62);
+            animation: zoomIn .22s cubic-bezier(.22, 1, .36, 1) both;
+        }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(.9); }
+            to   { opacity: 1; transform: scale(1); }
         }
 
         /* ========== 按钮 ========== */
@@ -1145,6 +1161,11 @@
     </div>
 </div>
 
+<!-- ===== 放大查看遮罩 ===== -->
+<div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-label="技能卡放大查看">
+    <div id="zoomCard"></div>
+</div>
+
     <!-- ===== 页脚 ===== -->
     <footer class="site-foot">
         <p>卡中探技 · 网球技能卡对战</p>
@@ -1331,6 +1352,8 @@ var ICON_URI = {
     var cardStudent  = el('cardStudent');
     var cardCoach    = el('cardCoach');
     var stage        = el('stage');
+    var zoomOverlay  = el('zoomOverlay');
+    var zoomCard     = el('zoomCard');
     var backMeta     = el('backMeta');
     var customCount  = el('customCount');
     var gameStatus   = el('gameStatus');
@@ -1681,7 +1704,7 @@ var ICON_URI = {
             var who = row[0], card = row[1], node = row[2];
             if (!card) {
                 node.style.display = 'none';
-                node.classList.remove('flipping', 'zoomed', 'card--duo');
+                node.classList.remove('flipping', 'card--duo');
                 return;
             }
             node.style.display = 'flex';
@@ -1724,6 +1747,7 @@ var ICON_URI = {
     }
 
     function resetGameDraw() {
+        if (zoomOverlay.classList.contains('active')) closeZoom();
         drawn.student = null;
         drawn.coach = null;
         renderStage();
@@ -1854,18 +1878,41 @@ var ICON_URI = {
         showToast('已清空自建技能卡');
     });
 
-    /* 点击卡面放大 / 缩小（两张卡都能放大） */
+    /* ---------- 放大查看：克隆到独立遮罩，脱离原 grid ---------- */
+    var zoomSource = null;
+
+    function openZoom(node) {
+        var card = node.querySelector('.card-name');
+        var name = card ? card.textContent : '';
+        // 克隆整张卡（含印色变量与图标 mask），放进遮罩
+        zoomCard.innerHTML = '';
+        var clone = node.cloneNode(true);
+        /* 去掉尺寸档 class（card--duo / card--mini），
+           让遮罩里的卡统一走大卡档样式 */
+        clone.classList.remove('flipping', 'card--duo', 'card--mini');
+        /* 保留 inline style 里的 --accent / --accent-lift / --accent-deep
+           （印色靠这三个变量），不要 removeAttribute('style') */
+        zoomCard.appendChild(clone);
+        zoomSource = node;
+        zoomOverlay.classList.add('active');
+        zoomOverlay.setAttribute('aria-label', '放大查看：' + name);
+    }
+
+    function closeZoom() {
+        zoomOverlay.classList.remove('active');
+        zoomCard.innerHTML = '';
+        zoomSource = null;
+    }
+
     [cardStudent, cardCoach].forEach(function (node) {
         node.addEventListener('click', function () {
-            node.classList.toggle('zoomed');
+            openZoom(node);
         });
     });
-    document.addEventListener('click', function (e) {
-        [cardStudent, cardCoach].forEach(function (node) {
-            if (node.classList.contains('zoomed') && !node.contains(e.target)) {
-                node.classList.remove('zoomed');
-            }
-        });
+
+    /* 点遮罩空白处关闭 */
+    zoomOverlay.addEventListener('click', function (e) {
+        if (e.target === zoomOverlay) closeZoom();
     });
 
     /* 视图切换 */
@@ -1891,9 +1938,7 @@ var ICON_URI = {
         }
         if (e.key === 'Escape') {
             if (modalOverlay.classList.contains('active')) closeModal();
-            [cardStudent, cardCoach].forEach(function (node) {
-                if (node.classList.contains('zoomed')) node.classList.remove('zoomed');
-            });
+            if (zoomOverlay.classList.contains('active')) closeZoom();
         }
     });
 
