@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 5 个递进球沿上升弧线 -->
+  <path d="M 9 52 Q 30 40 57 17" stroke="#1a1a1a" stroke-width="2.4" stroke-dasharray="4 5" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <circle cx="11" cy="51" r="5" fill="#1a1a1a"/>
+  <circle cx="21" cy="44" r="5.5" fill="#1a1a1a"/>
+  <circle cx="32" cy="36" r="6" fill="#1a1a1a"/>
+  <circle cx="43" cy="27" r="6.5" fill="#1a1a1a"/>
+  <circle cx="55" cy="19" r="7" fill="#1a1a1a"/></svg>

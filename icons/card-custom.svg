@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 实心十字（创作） -->
+  <path d="M 27 7 L 37 7 L 37 27 L 57 27 L 57 37 L 37 37 L 37 57 L 27 57 L 27 37 L 7 37 L 7 27 L 27 27 Z" fill="#1a1a1a" filter="url(#ink)"/>
+  <!-- 笔锋飞白 -->
+  <path d="M 45 14 L 54 5" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" opacity="0.42"/>
+  <path d="M 45 50 L 54 59" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" opacity="0.42"/>
+</svg>

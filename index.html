@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#eef1f4">
+    <meta name="description" content="卡中探技 · 网球技能卡对战：抽一张技能卡，把真实网球训练变成一场比赛。">
+    <title>卡中探技 · 网球技能卡对战</title>
+    <meta name="description" content="抽一张网球技能卡，把真实的训练约束变成场上的一分。39 张技能卡，5 大类别，按水平分级。">
+    <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="卡中探技 · 网球技能卡对战">
+    <meta property="og:description" content="抽一张网球技能卡，把真实的训练约束变成场上的一分。">
+    <meta property="og:image" content="og-cover.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <style>
+        /* ==========================================================
+           设计令牌 —— 与博趣集站点同源
+           页面外壳：现代浅色（对齐 hub / return）
+           卡面：宣纸 + 墨框 + 分类印色（对齐 score 页的矿物颜料色）
+           ========================================================== */
+        :root {
+            /* 页面 */
+            --bg-top:      #f6f8fa;
+            --bg-bot:      #eef1f4;
+            --ink:         #1c1c1e;   /* 正文墨色 */
+            --muted:       #6b6b70;   /* 次要文字，4.79:1 on paper */
+            --border:      #e4e2da;
+            --border-soft: #eceadf;
+
+            /* 宣纸卡面 */
+            --paper:       #f7f3ea;
+            --paper-line:  #d9d4c6;
+
+            /* 分类印色 —— 实底白字全部 ≥4.5:1 */
+            --boost:       #c0392b;   /* 朱砂红 */
+            --limit:       #2c5f8a;   /* 石青   */
+            --seal:        #6b4e8f;   /* 墨紫   */
+            --weaken:      #8a6208;   /* 深藤黄 */
+            --special:     #2c5c40;   /* 石绿   */
+            --custom:      #a65a2e;   /* 赭石   */
+
+            /* 尺寸 */
+            --r-card: 20px;
+            --r-ctl:  12px;
+            --r-pill: 999px;
+
+            --shadow-card: 0 1px 0 rgba(255,255,255,.75) inset, 0 12px 28px -20px rgba(28,28,30,.55);
+            --shadow-ctl:  0 1px 2px rgba(28,28,30,.06);
+        }
+
+        /* ========== 重置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%);
+            background-attachment: fixed;
+            color: var(--ink);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: calc(env(safe-area-inset-bottom) + 12px);
+        }
+
+        /* ========== 顶栏（对齐 hub 的 sticky + 毛玻璃） ========== */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            padding: calc(env(safe-area-inset-top) + 12px) 16px 10px;
+            background: rgba(246, 248, 250, .82);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            border-bottom: 1px solid rgba(28, 28, 30, .06);
+            text-align: center;
+        }
+        .topbar h1 {
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+        .topbar p {
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 2px;
+            margin-top: 3px;
+        }
+
+                        /* ========== 容器 ========== */
+        .wrap {
+            width: 100%;
+            max-width: 460px;
+            margin: 0 auto;
+            padding: 16px 16px 28px;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .wrap.is-wide {
+            max-width: 980px;
+        }
+
+        /* ========== 视图切换 ========== */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: rgba(28, 28, 30, .06);
+            border-radius: var(--r-ctl);
+            align-self: center;
+            margin-bottom: 18px;
+        }
+        .tabs button {
+            min-height: 44px;
+            padding: 0 18px;
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color .18s ease, color .18s ease;
+        }
+        .tabs button:hover {
+            color: var(--ink);
+        }
+        .tabs button.on {
+            background: #fff;
+            color: var(--ink);
+            box-shadow: 0 1px 3px rgba(28, 28, 30, .14);
+        }
+        .tabs button:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
+
+        /* ==========================================================
+           卡面组件 —— 全站唯一的一套卡面几何
+           所有卡牌（抽卡视图 + 图鉴视图）共用 .card
+           变化的只有：印色 / 徽记 / 文字
+           ========================================================== */
+        .card {
+            position: relative;
+            width: 100%;
+            background: var(--paper);
+            border: 1px solid var(--border);
+            border-radius: var(--r-card);
+            box-shadow: var(--shadow-card);
+            color: var(--ink);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        /* 顶部印色条 */
+        .card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-lift, var(--ink)) 0%, var(--accent, var(--ink)) 46%, var(--accent-deep, var(--ink)) 100%);
+        }
+
+        /* 卡头：印章 + 玩家 */
+        .card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 16px 16px 0;
+        }
+
+        /* 分类印章 —— 印石质感：渐变体 + 内高光 + 内暗边 */
+        .card-seal {
+            flex: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 9px;
+            background: linear-gradient(155deg, var(--accent-lift, var(--ink)) 0%, var(--accent, var(--ink)) 52%, var(--accent-deep, var(--ink)) 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: .5px;
+            text-align: center;
+            white-space: nowrap;
+            transform: rotate(-6deg);
+            box-shadow:
+                0 5px 12px -5px var(--accent-deep, rgba(0, 0, 0, .5)),
+                inset 0 1px 0 rgba(255, 255, 255, .42),
+                inset 0 -1.5px 0 rgba(0, 0, 0, .22);
+        }
+        /* 印章内框：transform 已使 .card-seal 成为绝对定位的包含块 */
+        .card-seal::after {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            border: 1.5px solid rgba(255, 255, 255, .55);
+            border-radius: 6px;
+            pointer-events: none;
+        }
+        /* 印章内文字保持正立 */
+        .card-seal span {
+            transform: rotate(6deg);
+        }
+
+        /* 玩家标记 */
+        .card-player {
+            flex: none;
+            font-size: 12px;
+            font-weight: 700;
+            color: #57575c;
+            border: 1px solid #d9d5c8;
+            background: rgba(255, 255, 255, .8);
+            border-radius: var(--r-pill);
+            padding: 4px 12px;
+        }
+
+        /* 徽记 —— flex:1 让徽记在卡面余白中垂直居中，避免上方出现大片空洞 */
+        .card-emblem {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 0 0;
+            flex: 1 0 auto;
+        }
+        /* 图标底砖：深色印石面 + 顶部柔光 + 内阴影 —— 类别色在这里最抢眼 */
+        .emblem-tile {
+            position: relative;
+            width: 112px;
+            height: 112px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .emblem-tile::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 28px;
+            background:
+                radial-gradient(120% 85% at 26% 12%, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, 0) 62%),
+                linear-gradient(155deg, var(--accent-lift, var(--ink)) 0%, var(--accent, var(--ink)) 44%, var(--accent-deep, var(--ink)) 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, .3),
+                inset 0 -16px 26px -16px rgba(0, 0, 0, .5),
+                0 10px 22px -12px var(--accent-deep, rgba(0, 0, 0, .6));
+        }
+        /* 图标本身：金属渐变（用 mask 让渐变透出形状） */
+        .icon-mask {
+            position: relative;
+            z-index: 1;
+            width: 78px;
+            height: 78px;
+            background: linear-gradient(155deg, #fffdf6 0%, #ffffff 32%, #e7d4ac 66%, #fffaf0 100%);
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .38));
+            -webkit-mask-image: var(--icon);
+            -webkit-mask-position: center;
+            -webkit-mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            mask-image: var(--icon);
+            mask-position: center;
+            mask-size: contain;
+            mask-repeat: no-repeat;
+        }
+
+        /* 卡名 */
+        .card-name {
+            font-size: 21px;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: .5px;
+            line-height: 1.35;
+            margin: 10px 22px 0;
+            padding: 0 4px;
+        }
+
+        /* 难度星级 */
+        .card-diff {
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: var(--accent, var(--ink));
+            margin-top: 7px;
+        }
+        .card-diff .off {
+            color: #cfcabc;
+        }
+
+        /* 规则 */
+        .card-rule-wrap {
+            margin: 15px 24px 0;
+            padding-top: 15px;
+            border-top: 1px dashed var(--paper-line);
+        }
+        .card-rule {
+            font-size: 15px;
+            line-height: 1.75;
+            text-align: center;
+            color: var(--ink);
+            padding: 0 6px;
+            min-height: 3.2em;
+            /* 允许教练复制规则文字去群里发 */
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        /* 训练目标 */
+        .card-goal {
+            margin: 14px 24px 20px;
+            padding: 9px 13px;
+            border-radius: 10px;
+            background: rgba(28, 28, 30, .05);
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: var(--muted);
+            text-align: center;
+        }
+        .card-goal b {
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        /* ========== 卡背 ========== */
+        .card-back {
+            background: var(--paper);
+            border: 1px dashed var(--paper-line);
+            border-radius: var(--r-card);
+            min-height: 430px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            gap: 4px;
+        }
+        /* 分类纹样：6 个徽记排成 3×2 的牌背花 */
+        .back-pattern {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 16px 18px;
+            border: 1px solid var(--paper-line);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .45);
+            margin-bottom: 18px;
+        }
+        .back-pattern img {
+            width: 40px;
+            height: 40px;
+            display: block;
+            opacity: .42;
+        }
+        .card-back .back-text {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+        .card-back .back-hint {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+        .card-back .back-meta {
+            margin-top: 14px;
+            font-size: 12px;
+            color: var(--muted);
+            border-top: 1px dashed var(--paper-line);
+            padding-top: 12px;
+            width: 100%;
+            max-width: 260px;
+            line-height: 1.7;
+        }
+
+        /* ========== 抽卡区 ========== */
+        .stage {
+            position: relative;
+            min-height: 430px;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            perspective: 1400px;
+        }
+        .stage > * {
+            width: 100%;
+            max-width: 400px;
+        }
+        /* 双方都选好卡 → 两张并排，方便面对面核对 */
+        .stage.is-dual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            align-items: stretch;
+        }
+        .stage.is-dual > * {
+            max-width: none;
+        }
+
+        /* 翻转入场 */
+        @keyframes cardFlipIn {
+            0%   { transform: rotateY(88deg) scale(.92); opacity: 0; }
+            55%  { transform: rotateY(-12deg) scale(1.02); opacity: 1; }
+            100% { transform: rotateY(0deg) scale(1); opacity: 1; }
+        }
+
+        /* ========== 抽卡动效 ========== */
+        /* 牌从牌堆里飞出来 */
+        @keyframes cardDeal {
+            0%   { transform: perspective(1100px) rotateY(-72deg) rotateX(16deg) scale(.72) translateY(46px); opacity: 0; }
+            45%  { opacity: 1; }
+            62%  { transform: perspective(1100px) rotateY(9deg) rotateX(-4deg) scale(1.055) translateY(-9px); opacity: 1; }
+            100% { transform: perspective(1100px) rotateY(0) rotateX(0) scale(1) translateY(0); opacity: 1; }
+        }
+        .skill-card.flipping {
+            animation: cardDeal .52s cubic-bezier(.22, 1, .36, 1) both;
+        }
+
+        /* 掠过卡面的光 */
+        @keyframes sheen {
+            from { transform: translateX(-125%); }
+            to   { transform: translateX(125%); }
+        }
+        .skill-card.flipping::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: var(--r-card);
+            background: linear-gradient(104deg, transparent 28%, rgba(255, 255, 255, .52) 45%, rgba(255, 255, 255, .10) 56%, transparent 72%);
+            transform: translateX(-125%);
+            animation: sheen .74s .1s ease-out both;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* 图标弹入（带回弹） */
+        @keyframes iconPop {
+            from { transform: scale(.28) rotate(-26deg); opacity: 0; }
+            to   { transform: scale(1) rotate(0); opacity: 1; }
+        }
+        .skill-card.flipping .icon-mask {
+            animation: iconPop .46s .16s cubic-bezier(.34, 1.56, .64, 1) both;
+        }
+
+        /* 文字依次浮现 */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        /* 印章自带旋转，只能做透明度渐显 */
+        .skill-card.flipping .card-seal { animation: fadeIn .32s .06s ease-out both; }
+        .skill-card.flipping .card-name { animation: fadeUp .32s .22s ease-out both; }
+        .skill-card.flipping .card-diff { animation: fadeUp .32s .28s ease-out both; }
+        .skill-card.flipping .card-rule { animation: fadeUp .32s .34s ease-out both; }
+        .skill-card.flipping .card-goal { animation: fadeUp .32s .40s ease-out both; }
+
+        /* 抽卡迸出的光点 */
+        .spark {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 6;
+            opacity: 0;
+        }
+        @keyframes sparkOut {
+            0%   { opacity: 0; transform: translate(0, 0) scale(.2); }
+            22%  { opacity: 1; }
+            100% { opacity: 0; transform: translate(var(--dx, 0), var(--dy, 0)) scale(.15); }
+        }
+        .skill-card.flipping .spark { animation: sparkOut .7s ease-out both; }
+
+        /* 放大查看 */
+        .skill-card.zoomed {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(92vw, 440px);
+            max-width: 440px;
+            z-index: 60;
+            box-shadow: 0 24px 60px -20px rgba(28, 28, 30, .6);
+            cursor: zoom-out;
+        }
+
+        /* ========== 按钮 ========== */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .btn {
+            flex: 1;
+            min-height: 48px;
+            border-radius: var(--r-ctl);
+            border: 1px solid transparent;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;
+            box-shadow: var(--shadow-ctl);
+        }
+        .btn:active {
+            transform: scale(.985);
+        }
+        .btn:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
+        .btn-student {
+            background: var(--limit);
+            color: #fff;
+        }
+        .btn-student:hover { background: #24507a; }
+        .btn-coach {
+            background: var(--ink);
+            color: #fff;
+        }
+        .btn-coach:hover { background: #34343a; }
+        .btn:disabled {
+            background: #e6e4dc;
+            color: #a3a099;
+            box-shadow: none;
+            cursor: default;
+            transform: none;
+        }
+        .btn-full {
+            width: 100%;
+            flex: none;
+            margin-top: 10px;
+            background: #fff;
+            color: var(--ink);
+            border-color: var(--border);
+        }
+        .btn-full:hover {
+            border-color: #cfccc0;
+            background: #fbfaf6;
+        }
+
+        /* 状态条 */
+        .status {
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+            min-height: 20px;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+        .status.ok { color: var(--special); }
+
+        /* 次级操作行 */
+        .meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 4px 14px;
+            margin-top: 12px;
+            font-size: 12.5px;
+            color: var(--muted);
+        }
+        .link-btn {
+            border: none;
+            background: none;
+            padding: 8px 2px;
+            min-height: 44px;
+            font-family: inherit;
+            font-size: 12.5px;
+            color: var(--limit);
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-color: rgba(44, 95, 138, .35);
+        }
+        .link-btn:hover { color: #1d4266; }
+        .link-btn:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        .link-btn.danger { color: #8d7a6a; text-decoration-color: rgba(141, 122, 106, .35); }
+        .link-btn.danger:hover { color: var(--boost); }
+
+        /* ========== 图鉴 ========== */
+        .gallery-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .gallery-head h2 {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .gallery-head span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .filters button {
+            min-height: 34px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-pill);
+            background: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: background-color .18s ease, color .18s ease, border-color .18s ease;
+        }
+        .filters button:hover { border-color: #cfccc0; color: var(--ink); }
+        .filters button.on {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: #fff;
+        }
+        .filters button:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
+        .filters button .mark {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 7px;
+            vertical-align: -3px;
+            background: var(--mark-color, var(--ink));
+            -webkit-mask-image: var(--icon);
+            -webkit-mask-position: center;
+            -webkit-mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            mask-image: var(--icon);
+            mask-position: center;
+            mask-size: contain;
+            mask-repeat: no-repeat;
+        }
+        .filters button.on .mark {
+            background: #fff;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+            gap: 10px;
+        }
+
+        /* 图鉴小卡：与大卡同一套几何，只是尺寸档不同 */
+        .card--mini { padding-bottom: 12px; }
+        .card--mini .card-head { padding: 10px 10px 0; }
+        .card--mini .card-seal {
+            width: 40px;
+            height: 40px;
+            font-size: 9.5px;
+            letter-spacing: 0;
+            border-radius: 7px;
+        }
+        .card--mini .card-seal::after {
+            inset: 3px;
+            border-radius: 4px;
+        }
+        .card--mini .card-player { font-size: 10px; padding: 3px 8px; }
+        .card--mini .card-emblem { padding: 20px 0 0; flex: 0 0 auto; }
+        .card--mini .emblem-tile { width: 58px; height: 58px; }
+        .card--mini .emblem-tile::before { border-radius: 15px; }
+        .card--mini .icon-mask { width: 40px; height: 40px; }
+        .card--mini .card-name {
+            font-size: 13px;
+            margin: 8px 10px 0;
+            line-height: 1.4;
+        }
+        .card--mini .card-diff { font-size: 10px; margin-top: 4px; letter-spacing: 1px; }
+        .card--mini .card-rule-wrap { margin: 9px 10px 0; padding-top: 9px; }
+        .card--mini .card-rule {
+            font-size: 11.5px;
+            line-height: 1.6;
+            min-height: 0;
+            padding: 0;
+            color: var(--muted);
+        }
+        .card--mini .card-goal {
+            margin: 9px 10px 0;
+            padding: 6px 8px;
+            font-size: 10.5px;
+            border-radius: 8px;
+        }
+
+        /* ===== 对战并排档：同一套卡面，尺寸档再收一档 ===== */
+        .card--duo .card-head { padding: 10px 10px 0; }
+        .card--duo .card-seal {
+            width: 40px;
+            height: 40px;
+            font-size: 11px;
+            border-radius: 7px;
+        }
+        .card--duo .card-seal::after { inset: 3px; border-radius: 4px; }
+        .card--duo .card-player { font-size: 10px; padding: 3px 8px; }
+        .card--duo .card-emblem { padding: 40px 0 0; flex: 0 0 auto; }
+        .card--duo .emblem-tile { width: 70px; height: 70px; }
+        .card--duo .emblem-tile::before { border-radius: 18px; }
+        .card--duo .icon-mask { width: 48px; height: 48px; }
+        .card--duo .card-name { font-size: 15px; margin: 7px 10px 0; }
+        .card--duo .card-diff { font-size: 11px; margin-top: 4px; letter-spacing: 1px; }
+        .card--duo .card-rule-wrap { margin: 10px 12px 0; padding-top: 10px; }
+        .card--duo .card-rule { font-size: 12px; line-height: 1.62; min-height: 0; padding: 0; }
+        .card--duo .card-goal {
+            margin: auto 12px 14px;
+            padding: 7px 9px;
+            font-size: 10.5px;
+        }
+
+        /* ========== 弹窗 ========== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(28, 28, 30, .45);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 80;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: #fff;
+            border-radius: 18px;
+            padding: 22px 20px 18px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 20px 50px -20px rgba(28, 28, 30, .5);
+            animation: modalIn .24s cubic-bezier(.22, 1, .36, 1) both;
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(.96) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .modal-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            text-align: center;
+            margin-bottom: 18px;
+            line-height: 1.6;
+        }
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 16px;
+            color: var(--ink);
+            background: #fbfaf6;
+            transition: border-color .18s ease, background-color .18s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--limit);
+            background: #fff;
+            outline: none;
+        }
+        .form-group select {
+            background: #fbfaf6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%236b6b70' d='M1 1l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 14px center;
+            padding-right: 36px;
+        }
+        .btn-save {
+            width: 100%;
+            min-height: 48px;
+            margin-top: 4px;
+            border: none;
+            border-radius: var(--r-ctl);
+            background: var(--ink);
+            color: #fff;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-save:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
+        /* 图标选择器 */
+        .icon-picker {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            max-height: 172px;
+            overflow-y: auto;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fbfaf6;
+        }
+        .icon-picker button {
+            aspect-ratio: 1 / 1;
+            border: 1.5px solid transparent;
+            border-radius: 9px;
+            background: transparent;
+            padding: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color .15s ease, border-color .15s ease;
+        }
+        .icon-picker button:hover {
+            background: rgba(28, 28, 30, .07);
+        }
+        .icon-picker button.on {
+            border-color: var(--limit);
+            background: rgba(44, 95, 138, .14);
+        }
+        .icon-picker button:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 1px;
+        }
+        .icon-picker .pk {
+            width: 22px;
+            height: 22px;
+            background: var(--pk-color, var(--ink));
+            -webkit-mask-image: var(--icon);
+            -webkit-mask-position: center;
+            -webkit-mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            mask-image: var(--icon);
+            mask-position: center;
+            mask-size: contain;
+            mask-repeat: no-repeat;
+        }
+        .picker-hint {
+            font-size: 11.5px;
+            color: var(--muted);
+            margin-top: 6px;
+            line-height: 1.6;
+        }
+
+        .btn-close-modal {
+            display: block;
+            margin: 10px auto 0;
+            min-height: 40px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-close-modal:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+            border-radius: 6px;
+        }
+
+        /* ========== Toast ========== */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(.92);
+            background: rgba(28, 28, 30, .9);
+            color: #fff;
+            padding: 16px 22px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.6;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .22s ease, transform .22s ease;
+            text-align: center;
+            max-width: 84vw;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* ========== 页脚 ========== */
+        .site-foot {
+            text-align: center;
+            padding: 8px 20px calc(env(safe-area-inset-bottom) + 18px);
+            border-top: 1px solid rgba(28, 28, 30, .07);
+            margin-top: 8px;
+        }
+        .site-foot p {
+            font-size: 12.5px;
+            color: #57575c;
+            letter-spacing: 1px;
+        }
+        .site-foot .foot-sub {
+            font-size: 11px;
+            color: #8b8b90;
+            margin-top: 4px;
+            letter-spacing: .5px;
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 380px) {
+            .card-name { font-size: 19px; }
+            .card-rule { font-size: 14px; }
+            .card-emblem img { width: 66px; height: 66px; }
+            .card-emblem { padding-top: 60px 0 0; }
+            .btn { font-size: 15px; letter-spacing: 0; }
+            .wrap { padding-left: 12px; padding-right: 12px; }
+        }
+        @media (min-width: 720px) {
+            .stage { min-height: 480px; }
+            .card-back { min-height: 480px; }
+            .card-emblem { padding-top: 64px 0 0; }
+            .card-emblem img { width: 88px; height: 88px; }
+            .card-name { font-size: 23px; }
+            .card-rule { font-size: 16px; }
+        }
+
+        /* ========== 降低动效偏好 ========== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .skill-card.flipping {
+                animation: none;
+            }
+        }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d2d0c8; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<header class="topbar">
+    <h1>卡中探技</h1>
+    <p>网球技能卡 · 抽一张，打一球</p>
+</header>
+
+<div class="wrap" id="wrap">
+
+    <!-- ===== 视图切换 ===== -->
+    <div class="tabs" role="tablist" aria-label="视图切换">
+        <button id="tabDraw" class="on" role="tab" aria-selected="true" aria-controls="viewDraw">抽卡对战</button>
+        <button id="tabGallery" role="tab" aria-selected="false" aria-controls="viewGallery">技能图鉴</button>
+    </div>
+
+    <!-- ===== 抽卡视图 ===== -->
+    <section id="viewDraw" role="tabpanel" aria-labelledby="tabDraw">
+
+        <div class="stage" id="stage">
+            <!-- 卡背 -->
+            <div class="card-back" id="cardBack">
+                <div class="back-pattern" aria-hidden="true">
+                    <img src="icons/card-boost.svg" alt="">
+                    <img src="icons/card-limit.svg" alt="">
+                    <img src="icons/card-seal.svg" alt="">
+                    <img src="icons/card-weaken.svg" alt="">
+                    <img src="icons/card-special.svg" alt="">
+                    <img src="icons/card-custom.svg" alt="">
+                </div>
+                <div class="back-text">点击下方抽卡</div>
+                <div class="back-hint">抽到的技能会改变这一分的规则</div>
+                <div class="back-meta" id="backMeta"></div>
+            </div>
+
+            <!-- 学员的卡 -->
+            <article class="card skill-card" id="cardStudent" style="display:none;" aria-live="polite">
+                <div class="card-head">
+                    <div class="card-seal"><span></span></div>
+                    <div class="card-player"></div>
+                </div>
+                <div class="card-emblem">
+                    <span class="emblem-tile"><span class="icon-mask" aria-hidden="true"></span></span>
+                </div>
+                <h2 class="card-name"></h2>
+                <div class="card-diff" role="img"></div>
+                <div class="card-rule-wrap"><div class="card-rule"></div></div>
+                <div class="card-goal"></div>
+            </article>
+
+            <!-- 教练的卡 -->
+            <article class="card skill-card" id="cardCoach" style="display:none;" aria-live="polite">
+                <div class="card-head">
+                    <div class="card-seal"><span></span></div>
+                    <div class="card-player"></div>
+                </div>
+                <div class="card-emblem">
+                    <span class="emblem-tile"><span class="icon-mask" aria-hidden="true"></span></span>
+                </div>
+                <h2 class="card-name"></h2>
+                <div class="card-diff" role="img"></div>
+                <div class="card-rule-wrap"><div class="card-rule"></div></div>
+                <div class="card-goal"></div>
+            </article>
+        </div>
+
+        <!-- 抽卡按钮 -->
+        <div class="actions">
+            <button class="btn btn-student" id="btnStudent">学员抽卡</button>
+            <button class="btn btn-coach" id="btnCoach">教练抽卡</button>
+        </div>
+
+        <button class="btn btn-full" id="btnRedraw">重新抽卡</button>
+
+        <p class="status" id="gameStatus"></p>
+
+        <div class="meta-row">
+            <span id="customCount"></span>
+            <button class="link-btn" id="btnCustom">＋ 新增技能卡</button>
+            <button class="link-btn danger" id="btnResetAll">清空自定义</button>
+        </div>
+    </section>
+
+    <!-- ===== 图鉴视图 ===== -->
+    <section id="viewGallery" role="tabpanel" aria-labelledby="tabGallery" hidden>
+        <div class="gallery-head">
+            <h2>技能图鉴</h2>
+            <span id="galleryCount"></span>
+        </div>
+        <div class="filters" id="filters"></div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+
+</div>
+
+<!-- ===== 新增技能弹窗 ===== -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+        <div class="modal-title" id="modalTitle">创作你的新技能</div>
+        <div class="modal-subtitle">写一条场上能一眼看懂的规则，教练和学员都好用</div>
+
+        <div class="form-group">
+            <label for="inputName">技能名称</label>
+            <input type="text" id="inputName" placeholder="比如：超级上旋球" maxlength="12">
+        </div>
+
+        <div class="form-group">
+            <label for="inputCategory">技能分类</label>
+            <select id="inputCategory">
+                <option value="boost">增强</option>
+                <option value="limit">限制</option>
+                <option value="seal">封印</option>
+                <option value="weaken">减弱</option>
+                <option value="special">特殊</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="inputDifficulty">难度</label>
+            <select id="inputDifficulty">
+                <option value="1">★ 零基础 · 单一动作</option>
+                <option value="2">★★ 初级 · 带一个条件</option>
+                <option value="3">★★★ 中级 · 组合动作</option>
+                <option value="4">★★★★ 进阶 · 高难组合</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>卡面图标</label>
+            <div class="icon-picker" id="iconPicker" role="listbox" aria-label="选择卡面图标"></div>
+            <p class="picker-hint">图标按分类着色。找不到合适的？可以在比赛前找我单独定制一张。</p>
+        </div>
+
+        <div class="form-group">
+            <label for="inputRule">技能规则</label>
+            <input type="text" id="inputRule" placeholder="比如：球落地两次后才能击球" maxlength="40">
+        </div>
+
+        <div class="form-group">
+            <label for="inputGoal">训练目标</label>
+            <input type="text" id="inputGoal" placeholder="比如：连续稳定击球" maxlength="24">
+        </div>
+
+        <button class="btn-save" id="btnSave">保存技能</button>
+        <button class="btn-close-modal" id="btnCloseModal">取消</button>
+    </div>
+</div>
+
+    <!-- ===== 页脚 ===== -->
+    <footer class="site-foot">
+        <p>卡中探技 · 网球技能卡对战</p>
+        <p class="foot-sub">真实网球训练约束 · 每人一张 · 场上判定</p>
+    </footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ============================================================
+    // 1. 分类配置 —— 印色 / 徽记 / 名称
+    //    所有卡面共用同一套几何，这里只提供"变化"的三样东西
+    // ============================================================
+    var CATEGORIES = {
+        boost:   { name: '增强', accent: '#c0392b', lift: '#d1483c', deep: '#7d1d14', mark: 'icons/card-boost.svg' },
+        limit:   { name: '限制', accent: '#2c5f8a', lift: '#3d6f9e', deep: '#143655', mark: 'icons/card-limit.svg' },
+        seal:    { name: '封印', accent: '#6b4e8f', lift: '#7a5aa0', deep: '#3a2757', mark: 'icons/card-seal.svg' },
+        weaken:  { name: '减弱', accent: '#8a6208', lift: '#a5760f', deep: '#5a3f04', mark: 'icons/card-weaken.svg' },
+        special: { name: '特殊', accent: '#2c5c40', lift: '#357a56', deep: '#143322', mark: 'icons/card-special.svg' },
+        custom:  { name: '自定义', accent: '#a65a2e', lift: '#b06a3c', deep: '#663a1a', mark: 'icons/card-custom.svg' }
+    };
+
+    // ============================================================
+    // 2. 内置技能表
+    //    字段：name / category / rule / icon / difficulty / goal
+    //    difficulty: 1~4 星（1=零基础 2=初级 3=中级 4=进阶）
+    //    goal: 训练目标 —— 这张卡在场上真正练的是哪项能力
+    // ============================================================
+    var BUILTIN_SKILLS = [
+        // ----- 增强卡（12） -----
+        { name: '五连击得分', category: 'boost', difficulty: 3, goal: '连续稳定击球', icon: 'icons/skill-combo5.svg',
+          rule: '连续击球入界5次，立刻得1分！' },
+        { name: '截击秒杀', category: 'boost', difficulty: 2, goal: '网前反应速度', icon: 'icons/skill-volley.svg',
+          rule: '截击入界，立刻得1分！' },
+        { name: '完美挥拍', category: 'boost', difficulty: 2, goal: '完整挥拍动作', icon: 'icons/skill-perfect-swing.svg',
+          rule: '回合内击球用完整动作碰到球，不会丢分！' },
+        { name: '发球得分', category: 'boost', difficulty: 3, goal: '发球落点控制', icon: 'icons/skill-serve-score.svg',
+          rule: '发球进指定区域，立刻得1分！' },
+        { name: '精准落点', category: 'boost', difficulty: 3, goal: '回球落点控制', icon: 'icons/skill-precise-spot.svg',
+          rule: '回合内打球进指定区域，立刻得1分！' },
+        { name: '重赛卡', category: 'boost', difficulty: 2, goal: '抗压与专注', icon: 'icons/skill-replay.svg',
+          rule: '本回合丢分后可直接喊"重打"，该分重来（每局限1次）。' },
+        { name: '模仿秀', category: 'boost', difficulty: 3, goal: '观察对手动作', icon: 'icons/skill-mimic.svg',
+          rule: '本回合模仿对手上一次击球方式（正手/反手/截击）回球，成功得1分！' },
+        { name: '连击翻倍', category: 'boost', difficulty: 2, goal: '连续击球节奏', icon: 'icons/skill-double-combo.svg',
+          rule: '本回合连续完成2个有效击球，得2分！' },
+        { name: '击掌得分', category: 'boost', difficulty: 2, goal: '击球后回位', icon: 'icons/skill-high-five.svg',
+          rule: '与对手击掌后，下一球入界得1分！' },
+        { name: '随挥合一', category: 'boost', difficulty: 3, goal: '随挥到位的完整性', icon: 'icons/skill-follow-through.svg',
+          rule: '本回合每次击球后球拍随挥到非持拍侧肩，完成得1分！' },
+        { name: '上旋高球', category: 'boost', difficulty: 4, goal: '上旋过网落点', icon: 'icons/skill-topspin.svg',
+          rule: '本回合必须用上旋把球送过网且落点在己方半场之后，成功得1分！' },
+        { name: '网前拦截', category: 'boost', difficulty: 3, goal: '上网截击时机', icon: 'icons/skill-net-intercept.svg',
+          rule: '本回合上网在发球线内截击入界得1分！' },
+
+        // ----- 限制卡（11） -----
+        { name: '落地再打', category: 'limit', difficulty: 1, goal: '等球落地的判断', icon: 'icons/skill-bounce-twice.svg',
+          rule: '球落地2次后才能击球！' },
+        { name: '正手专属', category: 'limit', difficulty: 1, goal: '底线正手动作', icon: 'icons/skill-forehand-only.svg',
+          rule: '只能用底线正手击球！' },
+        { name: '反手专属', category: 'limit', difficulty: 1, goal: '底线反手动作', icon: 'icons/skill-backhand-only.svg',
+          rule: '只能用底线反手击球！' },
+        { name: '不落地击球', category: 'limit', difficulty: 3, goal: '上升期击球', icon: 'icons/skill-no-bounce.svg',
+          rule: '除发球/挑高球，球不落地就打！' },
+        { name: '定点得分', category: 'limit', difficulty: 2, goal: '指定区域落点', icon: 'icons/skill-fixed-spot.svg',
+          rule: '只能打进球指定区域！' },
+        { name: '区域接球', category: 'limit', difficulty: 2, goal: '提前判断来球落点', icon: 'icons/skill-zone-receive.svg',
+          rule: '只能在指定区域接球！' },
+        { name: '禁区卡', category: 'limit', difficulty: 3, goal: '把对手逼向边线', icon: 'icons/skill-forbidden-zone.svg',
+          rule: '指定对方半场一个区域，对手本回合球落入该区算失误！' },
+        { name: '二跳击球', category: 'limit', difficulty: 2, goal: '等第二跳的耐心', icon: 'icons/skill-second-bounce.svg',
+          rule: '球落指定区域，必须等二跳再打！' },
+        { name: '先声夺人', category: 'limit', difficulty: 2, goal: '主动进攻意识', icon: 'icons/skill-first-blood.svg',
+          rule: '本回合你率先得分则得2分（对手正常计分）！' },
+        { name: '二跳正手', category: 'limit', difficulty: 3, goal: '二跳后的正手发力', icon: 'icons/skill-second-bounce-forehand.svg',
+          rule: '来球落地后必须等第二跳再用正手击出，抢第一跳算失误！' },
+        { name: '反手高吊', category: 'limit', difficulty: 3, goal: '反手挑高球过网', icon: 'icons/skill-backhand-lob.svg',
+          rule: '本回合只能用反手挑高球过网，落地后场得1分！' },
+
+        // ----- 封印卡（6） -----
+        { name: '封印擅长技能', category: 'seal', difficulty: 2, goal: '用非惯用手打', icon: 'icons/skill-seal-skill.svg',
+          rule: '限制对手用最拿手的技能！' },
+        { name: '螃蟹移动', category: 'seal', difficulty: 2, goal: '并步移动', icon: 'icons/skill-crab-step.svg',
+          rule: '只能用并步进行移动！' },
+        { name: '三而竭', category: 'seal', difficulty: 3, goal: '控制领先优势', icon: 'icons/skill-no-three.svg',
+          rule: '禁止连续赢得3分！' },
+        { name: '封印正手', category: 'seal', difficulty: 2, goal: '反手对抗', icon: 'icons/skill-seal-forehand.svg',
+          rule: '对手只能用反手击球！' },
+        { name: '封印反手', category: 'seal', difficulty: 2, goal: '正手对抗', icon: 'icons/skill-seal-backhand.svg',
+          rule: '对手只能用正手击球！' },
+        { name: '交叉步禁', category: 'seal', difficulty: 3, goal: '并步+小碎步', icon: 'icons/skill-no-cross-step.svg',
+          rule: '本回合禁止交叉步，只能用并步+小碎步移动！' },
+
+        // ----- 减弱卡（7） -----
+        { name: '连续击球减分', category: 'weaken', difficulty: 3, goal: '打断对手连续击球', icon: 'icons/skill-combo-drain.svg',
+          rule: '对手连续击球入界7次，立刻减1分！' },
+        { name: '截击入界减分', category: 'weaken', difficulty: 2, goal: '封住对手网前', icon: 'icons/skill-volley-drain.svg',
+          rule: '对手截击入界，立刻减1分！' },
+        { name: '未挥拍减分', category: 'weaken', difficulty: 3, goal: '完整挥拍动作', icon: 'icons/skill-no-swing-drain.svg',
+          rule: '对手每回合有一次未挥拍完整，立刻减1分！' },
+        { name: '发球区域减分', category: 'weaken', difficulty: 3, goal: '压缩对手发球空间', icon: 'icons/skill-serve-zone-drain.svg',
+          rule: '对手发球进特定区域，立刻减1分！' },
+        { name: '特定区域减分', category: 'weaken', difficulty: 2, goal: '站位封堵', icon: 'icons/skill-zone-drain.svg',
+          rule: '对手每打入特定区域一次，立刻减1分！' },
+        { name: '模仿击球减分', category: 'weaken', difficulty: 3, goal: '给对手出难题', icon: 'icons/skill-mimic-drain.svg',
+          rule: '对手模仿你上一次击球模式，立刻减1分！' },
+        { name: '未回位减分', category: 'weaken', difficulty: 2, goal: '击球后回位', icon: 'icons/skill-no-return-drain.svg',
+          rule: '对手击球后未回到准备姿势，立刻减1分！' },
+
+        // ----- 特殊卡（3） -----
+        { name: '交换比分', category: 'special', difficulty: 1, goal: '比分管理', icon: 'icons/skill-swap-score.svg',
+          rule: '和对手交换比分，卡片使用后消失！' },
+        { name: '金身', category: 'special', difficulty: 3, goal: '防守与耐心', icon: 'icons/skill-golden-body.svg',
+          rule: '本回合你只得分不丢分（你失误不算分，对手失误你得分）！' },
+        { name: '连胜奖励', category: 'special', difficulty: 3, goal: '建立连续得分', icon: 'icons/skill-streak-bonus.svg',
+          rule: '连续得2分后，下一分额外+1分！' }
+    ];
+
+    // ============================================================
+    // 3. 状态
+    // ============================================================
+    var skillPool = [];
+    /** 各方已选的卡 */
+    var drawn = { student: null, coach: null };
+    var galleryFilter = 'all';
+    var toastTimer = null;
+
+    var el = function (id) { return document.getElementById(id); };
+
+    var cardBack     = el('cardBack');
+    var cardStudent  = el('cardStudent');
+    var cardCoach    = el('cardCoach');
+    var stage        = el('stage');
+    var backMeta     = el('backMeta');
+    var customCount  = el('customCount');
+    var gameStatus   = el('gameStatus');
+
+    var btnStudent   = el('btnStudent');
+    var btnCoach     = el('btnCoach');
+    var btnCustom    = el('btnCustom');
+    var btnRedraw    = el('btnRedraw');
+    var btnResetAll  = el('btnResetAll');
+
+    var tabDraw      = el('tabDraw');
+    var tabGallery   = el('tabGallery');
+    var viewDraw     = el('viewDraw');
+    var viewGallery  = el('viewGallery');
+    var wrap         = el('wrap');
+
+    var galleryCount = el('galleryCount');
+    var filtersBox   = el('filters');
+    var galleryGrid  = el('galleryGrid');
+
+    var modalOverlay = el('modalOverlay');
+    var inputName     = el('inputName');
+    var inputCategory = el('inputCategory');
+    var inputDifficulty = el('inputDifficulty');
+    var inputRule     = el('inputRule');
+    var inputGoal     = el('inputGoal');
+    var btnSave       = el('btnSave');
+    var btnCloseModal = el('btnCloseModal');
+    var toastEl       = el('toast');
+
+    // ============================================================
+    // 4. 音效引擎（Web Audio API）
+    // ============================================================
+    var audioCtx = null;
+
+    function getAudioCtx() {
+        if (!audioCtx) {
+            var Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return null;
+            audioCtx = new Ctx();
+        }
+        if (audioCtx.state === 'suspended' && audioCtx.resume) audioCtx.resume();
+        return audioCtx;
+    }
+
+    function playNote(ctx, freq, startTime, duration, type, volume) {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(volume, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration + 0.02);
+    }
+
+    function playNoise(ctx, startTime, duration, volume) {
+        var size = Math.floor(ctx.sampleRate * duration);
+        var buffer = ctx.createBuffer(1, size, ctx.sampleRate);
+        var data = buffer.getChannelData(0);
+        for (var i = 0; i < size; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+        var src = ctx.createBufferSource();
+        src.buffer = buffer;
+        var gain = ctx.createGain();
+        gain.gain.setValueAtTime(volume, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        src.connect(gain);
+        gain.connect(ctx.destination);
+        src.start(startTime);
+    }
+
+    /** 按分类播放不同音效 */
+    function playCategorySound(category) {
+        try {
+            var ctx = getAudioCtx();
+            if (!ctx) return;
+            var now = ctx.currentTime;
+
+            switch (category) {
+                case 'boost':   /* 明亮上行琶音 */
+                    playNote(ctx, 523.25, now, 0.12, 'sine', 0.22);
+                    playNote(ctx, 659.25, now + 0.10, 0.12, 'sine', 0.22);
+                    playNote(ctx, 783.99, now + 0.20, 0.18, 'sine', 0.22);
+                    playNote(ctx, 1046.5, now + 0.30, 0.25, 'sine', 0.18);
+                    break;
+                case 'limit':   /* 轻快跳音 */
+                    playNote(ctx, 440, now, 0.08, 'triangle', 0.18);
+                    playNote(ctx, 554.37, now + 0.10, 0.08, 'triangle', 0.18);
+                    playNote(ctx, 440, now + 0.20, 0.08, 'triangle', 0.18);
+                    playNote(ctx, 659.25, now + 0.30, 0.12, 'triangle', 0.18);
+                    break;
+                case 'seal':    /* 神秘低沉 */
+                    playNote(ctx, 220, now, 0.15, 'sine', 0.18);
+                    playNote(ctx, 261.63, now + 0.15, 0.15, 'sine', 0.18);
+                    playNote(ctx, 329.63, now + 0.30, 0.15, 'sine', 0.14);
+                    playNote(ctx, 261.63, now + 0.40, 0.20, 'sine', 0.14);
+                    break;
+                case 'weaken':  /* 下行低音 */
+                    playNote(ctx, 392, now, 0.10, 'sawtooth', 0.10);
+                    playNote(ctx, 349.23, now + 0.12, 0.10, 'sawtooth', 0.10);
+                    playNote(ctx, 293.66, now + 0.24, 0.10, 'sawtooth', 0.10);
+                    playNote(ctx, 261.63, now + 0.36, 0.20, 'sawtooth', 0.09);
+                    break;
+                case 'special': /* 魔幻闪烁 */
+                    playNote(ctx, 659.25, now, 0.08, 'sine', 0.18);
+                    playNote(ctx, 783.99, now + 0.08, 0.08, 'sine', 0.18);
+                    playNote(ctx, 1046.5, now + 0.16, 0.08, 'sine', 0.18);
+                    playNote(ctx, 1318.5, now + 0.24, 0.15, 'sine', 0.14);
+                    playNoise(ctx, now, 0.15, 0.04);
+                    break;
+                case 'custom':  /* 欢乐铃声 */
+                    playNote(ctx, 880, now, 0.10, 'sine', 0.20);
+                    playNote(ctx, 1108.73, now + 0.12, 0.10, 'sine', 0.20);
+                    playNote(ctx, 1318.5, now + 0.24, 0.20, 'sine', 0.16);
+                    break;
+                default:
+                    playNote(ctx, 800, now, 0.08, 'sine', 0.18);
+                    playNote(ctx, 1000, now + 0.08, 0.08, 'sine', 0.18);
+            }
+        } catch (e) {
+            /* 音频不可用不影响功能 */
+        }
+    }
+
+    // ============================================================
+    // 5. 渲染
+    // ============================================================
+
+    /** 生成难度星级 HTML */
+    function diffHTML(level) {
+        var full = Math.max(1, Math.min(5, level || 1));
+        var s = '';
+        for (var i = 1; i <= 5; i++) {
+            s += i <= full ? '<span class="on">★</span>' : '<span class="off">☆</span>';
+        }
+        return s;
+    }
+
+    var DIFF_LABEL = ['', '零基础', '初级', '中级', '进阶'];
+
+    /** 把一张卡的数据写进卡面 DOM（抽卡视图与图鉴视图共用同一套字段） */
+    function fillCard(card, cat, playerLabel, root) {
+        root = root || cardStudent;
+        root.style.setProperty('--accent', cat.accent);
+        root.style.setProperty('--accent-lift', cat.lift);
+        root.style.setProperty('--accent-deep', cat.deep);
+
+        var seal = root.querySelector('.card-seal span');
+        if (seal) seal.textContent = cat.name;
+
+        var badge = root.querySelector('.card-player');
+        if (badge) {
+            badge.textContent = playerLabel || '';
+            badge.style.display = playerLabel ? '' : 'none';
+        }
+
+        var icon = root.querySelector('.icon-mask');
+        if (icon) {
+            icon.style.setProperty('--icon', 'url("' + (card.icon || cat.mark) + '")');
+        }
+
+        var nm = root.querySelector('.card-name');
+        if (nm) nm.textContent = card.name;
+
+        var df = root.querySelector('.card-diff');
+        if (df) {
+            df.innerHTML = diffHTML(card.difficulty);
+            df.setAttribute('aria-label', '难度 ' + DIFF_LABEL[card.difficulty || 1]);
+        }
+
+        var rl = root.querySelector('.card-rule');
+        if (rl) rl.textContent = card.rule;
+
+        var gl = root.querySelector('.card-goal');
+        if (gl) gl.innerHTML = '<b>训练目标</b>　' + (card.goal || '—');
+    }
+
+    /** 抽卡时从图标周围迸出光点 */
+    function spawnSparks(root, cat) {
+        var tile = root.querySelector('.emblem-tile');
+        if (!tile) return;
+        for (var i = 0; i < 11; i++) {
+            var s = document.createElement('span');
+            s.className = 'spark';
+            var ang = (Math.PI * 2 / 11) * i + Math.random() * 0.5;
+            var dist = 52 + Math.random() * 62;
+            s.style.setProperty('--dx', (Math.cos(ang) * dist).toFixed(1) + 'px');
+            s.style.setProperty('--dy', (Math.sin(ang) * dist).toFixed(1) + 'px');
+            s.style.left = (50 + (Math.random() * 26 - 13)).toFixed(1) + '%';
+            s.style.top = (50 + (Math.random() * 26 - 13)).toFixed(1) + '%';
+            s.style.background = i % 3 === 0 ? '#fff' : cat.lift;
+            s.style.animationDelay = (0.05 + Math.random() * 0.12).toFixed(2) + 's';
+            tile.appendChild(s);
+            (function (el) {
+                setTimeout(function () { el.remove(); }, 1500);
+            })(s);
+        }
+    }
+
+    /** 图鉴里的小卡：用同一套 .card 组件，只换尺寸档 */
+    function buildMiniCard(card) {
+        var cat = card.isCustom ? CATEGORIES.custom : (CATEGORIES[card.category] || CATEGORIES.boost);
+        var d = document.createElement('article');
+        d.className = 'card card--mini';
+        d.innerHTML =
+            '<div class="card-head">' +
+                '<div class="card-seal"><span></span></div>' +
+                '<div class="card-player"></div>' +
+            '</div>' +
+            '<div class="card-emblem"><span class="emblem-tile"><span class="icon-mask"></span></span></div>' +
+            '<h3 class="card-name"></h3>' +
+            '<div class="card-diff" role="img"></div>' +
+            '<div class="card-rule-wrap"><div class="card-rule"></div></div>' +
+            '<div class="card-goal"></div>';
+        fillCard(card, cat, card.isCustom ? '自建' : DIFF_LABEL[card.difficulty || 1], d);
+        return d;
+    }
+
+    // ============================================================
+    // 6. 技能库读写
+    // ============================================================
+    function getCustomSkills() {
+        try {
+            var raw = localStorage.getItem('tennis_custom_skills');
+            if (!raw) return [];
+            var arr = JSON.parse(raw);
+            return Array.isArray(arr) ? arr : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveCustomSkills(list) {
+        try {
+            localStorage.setItem('tennis_custom_skills', JSON.stringify(list));
+        } catch (e) {
+            showToast('⚠️ 本地存储不可用，自定义卡无法保存');
+        }
+    }
+
+    function loadSkillPool() {
+        var customs = getCustomSkills();
+        skillPool = BUILTIN_SKILLS.map(function (s) {
+            return { name: s.name, category: s.category, rule: s.rule, icon: s.icon,
+                     difficulty: s.difficulty, goal: s.goal, isCustom: false };
+        }).concat(customs.map(function (s) {
+            return { name: s.name, category: s.category, rule: s.rule, icon: s.icon,
+                     difficulty: s.difficulty, goal: s.goal, isCustom: true };
+        }));
+
+        updateCustomCount(customs.length);
+        renderGallery();
+    }
+
+    function updateCustomCount(count) {
+        var total = BUILTIN_SKILLS.length + count;
+        customCount.textContent = count > 0
+            ? '技能库共 ' + total + ' 张（自建 ' + count + ' 张）'
+            : '技能库共 ' + total + ' 张';
+        backMeta.innerHTML = '内置 ' + BUILTIN_SKILLS.length + ' 张 · 5 类<br>每类都是一条场上能判定的规则';
+    }
+
+    // ============================================================
+    // 7. 图鉴
+    // ============================================================
+    function renderFilters() {
+        var keys = ['all', 'boost', 'limit', 'seal', 'weaken', 'special', 'custom'];
+        var names = { all: '全部', boost: '增强', limit: '限制', seal: '封印',
+                      weaken: '减弱', special: '特殊', custom: '自定义' };
+        filtersBox.innerHTML = '';
+        keys.forEach(function (k) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = names[k];
+            if (k !== 'all') {
+                var mark = document.createElement('span');
+                mark.className = 'mark';
+                mark.style.setProperty('--icon', 'url("' + CATEGORIES[k].mark + '")');
+                mark.style.setProperty('--mark-color', CATEGORIES[k].accent);
+                b.insertBefore(mark, b.firstChild);
+            }
+            if (k === galleryFilter) b.className = 'on';
+            b.addEventListener('click', function () {
+                galleryFilter = k;
+                renderFilters();
+                renderGallery();
+            });
+            filtersBox.appendChild(b);
+        });
+    }
+
+    function renderGallery() {
+        var list = skillPool.filter(function (s) {
+            if (galleryFilter === 'all') return true;
+            if (galleryFilter === 'custom') return !!s.isCustom;
+            return !s.isCustom && s.category === galleryFilter;
+        });
+        galleryGrid.innerHTML = '';
+        list.forEach(function (s) {
+            galleryGrid.appendChild(buildMiniCard(s));
+        });
+        galleryCount.textContent = '共 ' + list.length + ' 张';
+    }
+
+    // ============================================================
+    // 8. 抽卡
+    // ============================================================
+    function updateButtonStates() {
+        btnStudent.disabled = !!drawn.student;
+        btnStudent.textContent = drawn.student ? '学员已抽' : '学员抽卡';
+        btnCoach.disabled = !!drawn.coach;
+        btnCoach.textContent = drawn.coach ? '教练已抽' : '教练抽卡';
+    }
+
+    function updateGameStatus() {
+        if (drawn.student && drawn.coach) {
+            gameStatus.textContent = '双方已选卡，开始对战吧！需要重来点「重新抽卡」';
+            gameStatus.className = 'status ok';
+        } else if (drawn.student) {
+            gameStatus.textContent = '学员已选卡，等教练选卡…';
+            gameStatus.className = 'status';
+        } else if (drawn.coach) {
+            gameStatus.textContent = '教练已选卡，等学员选卡…';
+            gameStatus.className = 'status';
+        } else {
+            gameStatus.textContent = '';
+            gameStatus.className = 'status';
+        }
+    }
+
+    /** 渲染舞台：0 张=卡背，1 张=单卡大图，2 张=并排对照 */
+    function renderStage(animateWho) {
+        var dual = !!(drawn.student && drawn.coach);
+        stage.classList.toggle('is-dual', dual);
+        cardBack.style.display = (drawn.student || drawn.coach) ? 'none' : 'flex';
+
+        [['student', drawn.student, cardStudent], ['coach', drawn.coach, cardCoach]].forEach(function (row) {
+            var who = row[0], card = row[1], node = row[2];
+            if (!card) {
+                node.style.display = 'none';
+                node.classList.remove('flipping', 'zoomed', 'card--duo');
+                return;
+            }
+            node.style.display = 'flex';
+            node.classList.toggle('card--duo', dual);
+
+            var cat = CATEGORIES[card.isCustom ? 'custom' : (card.category || 'boost')];
+            fillCard(card, cat, who === 'student' ? '学员' : '教练', node);
+
+            if (animateWho === who) {
+                node.classList.remove('flipping');
+                void node.offsetWidth;   /* 强制回流以重启动画 */
+                node.classList.add('flipping');
+                spawnSparks(node, cat);
+            }
+        });
+    }
+
+    function drawCard(player) {
+        if (drawn[player]) {
+            showToast((player === 'student' ? '学员' : '教练') + '已经抽过卡了，点「重新抽卡」再来一局');
+            return;
+        }
+        if (!skillPool.length) {
+            showToast('技能库是空的');
+            return;
+        }
+
+        var card = skillPool[Math.floor(Math.random() * skillPool.length)];
+        drawn[player] = card;
+
+        playCategorySound(card.isCustom ? 'custom' : card.category);
+
+        renderStage(player);
+        updateButtonStates();
+        updateGameStatus();
+    }
+
+    function showCardBack() {
+        renderStage();
+    }
+
+    function resetGameDraw() {
+        drawn.student = null;
+        drawn.coach = null;
+        renderStage();
+        updateButtonStates();
+        updateGameStatus();
+        showToast('已重置，双方可以重新抽卡');
+    }
+
+    // ============================================================
+    // 9. Toast
+    // ============================================================
+    function showToast(msg, duration) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+            toastEl.classList.remove('show');
+        }, duration || 2200);
+    }
+
+    // ============================================================
+    // 10. 弹窗
+    // ============================================================
+    function openModal() {
+        inputName.value = '';
+        inputCategory.value = 'boost';
+        inputDifficulty.value = '2';
+        inputRule.value = '';
+        inputGoal.value = '';
+        selectedIcon = '';
+        renderIconPicker();
+        modalOverlay.classList.add('active');
+        setTimeout(function () { inputName.focus(); }, 60);
+    }
+
+    /* ---------- 图标选择器 ---------- */
+    var selectedIcon = '';
+
+    /** 可选图标库：6 个分类徽记 + 39 个功能图标，按分类着色 */
+    function iconLibrary() {
+        var lib = [];
+        Object.keys(CATEGORIES).forEach(function (k) {
+            lib.push({ path: CATEGORIES[k].mark, color: CATEGORIES[k].accent, label: CATEGORIES[k].name + '徽记' });
+        });
+        BUILTIN_SKILLS.forEach(function (s) {
+            var cat = CATEGORIES[s.category] || CATEGORIES.boost;
+            lib.push({ path: s.icon, color: cat.accent, label: s.name });
+        });
+        return lib;
+    }
+
+    function renderIconPicker() {
+        var picker = el('iconPicker');
+        picker.innerHTML = '';
+        iconLibrary().forEach(function (item) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.title = item.label;
+            b.setAttribute('role', 'option');
+            b.setAttribute('aria-label', item.label);
+            var pk = document.createElement('span');
+            pk.className = 'pk';
+            pk.style.setProperty('--icon', 'url("' + item.path + '")');
+            pk.style.setProperty('--pk-color', item.color);
+            b.appendChild(pk);
+            if (selectedIcon === item.path) b.classList.add('on');
+            b.addEventListener('click', function () {
+                selectedIcon = item.path;
+                renderIconPicker();
+            });
+            picker.appendChild(b);
+        });
+    }
+
+    function closeModal() {
+        modalOverlay.classList.remove('active');
+    }
+
+    function saveCustomSkill() {
+        var name = inputName.value.trim();
+        var rule = inputRule.value.trim();
+        var goal = inputGoal.value.trim();
+
+        if (!name) { showToast('先给技能取个名字吧'); inputName.focus(); return; }
+        if (!rule) { showToast('写一条场上能判定的规则吧'); inputRule.focus(); return; }
+        if (!goal) { showToast('补一句训练目标，教练才知道这张卡练什么'); inputGoal.focus(); return; }
+
+        var newSkill = {
+            name: name,
+            category: inputCategory.value,
+            rule: rule,
+            goal: goal,
+            difficulty: parseInt(inputDifficulty.value, 10) || 2,
+            icon: selectedIcon,
+            isCustom: true
+        };
+
+        var customs = getCustomSkills();
+        customs.push(newSkill);
+        saveCustomSkills(customs);
+        loadSkillPool();
+        closeModal();
+        showToast('新技能「' + name + '」加入成功');
+    }
+
+    // ============================================================
+    // 11. 事件
+    // ============================================================
+    btnStudent.addEventListener('click', function () { drawCard('student'); });
+    btnCoach.addEventListener('click', function () { drawCard('coach'); });
+    btnRedraw.addEventListener('click', resetGameDraw);
+    btnCustom.addEventListener('click', openModal);
+    btnSave.addEventListener('click', saveCustomSkill);
+    btnCloseModal.addEventListener('click', closeModal);
+
+    modalOverlay.addEventListener('click', function (e) {
+        if (e.target === modalOverlay) closeModal();
+    });
+
+    btnResetAll.addEventListener('click', function () {
+        if (!getCustomSkills().length) {
+            showToast('还没有自建技能卡');
+            return;
+        }
+        if (!confirm('确定清空所有自建技能卡吗？内置的 ' + BUILTIN_SKILLS.length + ' 张不受影响。')) return;
+        saveCustomSkills([]);
+        loadSkillPool();
+        showToast('已清空自建技能卡');
+    });
+
+    /* 点击卡面放大 / 缩小（两张卡都能放大） */
+    [cardStudent, cardCoach].forEach(function (node) {
+        node.addEventListener('click', function () {
+            node.classList.toggle('zoomed');
+        });
+    });
+    document.addEventListener('click', function (e) {
+        [cardStudent, cardCoach].forEach(function (node) {
+            if (node.classList.contains('zoomed') && !node.contains(e.target)) {
+                node.classList.remove('zoomed');
+            }
+        });
+    });
+
+    /* 视图切换 */
+    function switchView(which) {
+        var isDraw = which === 'draw';
+        viewDraw.hidden = !isDraw;
+        viewGallery.hidden = isDraw;
+        tabDraw.classList.toggle('on', isDraw);
+        tabGallery.classList.toggle('on', !isDraw);
+        tabDraw.setAttribute('aria-selected', isDraw ? 'true' : 'false');
+        tabGallery.setAttribute('aria-selected', isDraw ? 'false' : 'true');
+        wrap.classList.toggle('is-wide', !isDraw);
+        window.scrollTo(0, 0);
+    }
+    tabDraw.addEventListener('click', function () { switchView('draw'); });
+    tabGallery.addEventListener('click', function () { switchView('gallery'); });
+
+    /* 键盘 */
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && modalOverlay.classList.contains('active')) {
+            e.preventDefault();
+            saveCustomSkill();
+        }
+        if (e.key === 'Escape') {
+            if (modalOverlay.classList.contains('active')) closeModal();
+            [cardStudent, cardCoach].forEach(function (node) {
+                if (node.classList.contains('zoomed')) node.classList.remove('zoomed');
+            });
+        }
+    });
+
+    // ============================================================
+    // 12. 初始化
+    // ============================================================
+    loadSkillPool();
+    renderFilters();
+    updateButtonStates();
+    updateGameStatus();
+
+    console.log('卡中探技 · 网球技能卡 已加载');
+    console.log('技能总数：' + skillPool.length + ' 张');
+})();
+</script>
+
+</body>
+</html>

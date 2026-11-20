@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 冲向高处的球 -->
+  <circle cx="32" cy="13" r="8.5" fill="#1a1a1a" filter="url(#ink)"/>
+  <!-- 实心上冲箭头 -->
+  <path d="M 32 25 L 44 41 L 37 41 L 37 55 L 27 55 L 27 41 L 20 41 Z" fill="#1a1a1a" filter="url(#ink)"/>
+  <!-- 速度线 -->
+  <path d="M 12 13 L 6 7" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" opacity="0.45"/>
+  <path d="M 52 13 L 58 7" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" opacity="0.45"/>
+</svg>

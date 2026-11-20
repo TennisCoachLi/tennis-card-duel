@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 特定区域 -->
+  <rect x="7" y="16" width="36" height="30" rx="4" fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-dasharray="5 4"/>
+  <!-- 打入区域的球 -->
+  <circle cx="25" cy="31" r="8" fill="#1a1a1a"/>
+  <!-- 减分角标 -->
+  <path fill="#1a1a1a" fill-rule="evenodd" d="M 48 35 a 11 11 0 1 1 0 22 a 11 11 0 1 1 0 -22 Z M 41 41.5 L 55 41.5 L 55 49.5 L 41 49.5 Z"/></svg>

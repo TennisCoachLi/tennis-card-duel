@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 循环箭头 -->
+  <path d="M 54 33 A 22 22 0 1 1 33 11" stroke="#1a1a1a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+  <path d="M 24 13 L 33 9 L 30 20" stroke="#1a1a1a" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 重新来过的球 -->
+  <circle cx="32" cy="36" r="7" fill="#1a1a1a"/></svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 淡淡的原版 -->
+  <ellipse cx="24" cy="35" rx="11" ry="13" fill="none" stroke="#1a1a1a" stroke-width="2.6" opacity="0.38"/>
+  <path d="M 18 46 L 12 57" stroke="#1a1a1a" stroke-width="2.6" stroke-linecap="round" opacity="0.38"/>
+  <!-- 模仿的实拍 -->
+  <ellipse cx="42" cy="26" rx="12" ry="14" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+  <path d="M 49 39 L 56 53" stroke="#1a1a1a" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M 34 19 L 50 33 M 34 33 L 50 19" stroke="#1a1a1a" stroke-width="1.4" opacity="0.4"/></svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 实心四芒星 -->
+  <path d="M 32 5 L 38 26 L 59 32 L 38 38 L 32 59 L 26 38 L 5 32 L 26 26 Z" fill="#1a1a1a" filter="url(#ink)"/>
+  <!-- 副星芒 -->
+  <path d="M 50 9 L 51.8 14.2 L 57 16 L 51.8 17.8 L 50 23 L 48.2 17.8 L 43 16 L 48.2 14.2 Z" fill="#1a1a1a" opacity="0.7"/>
+  <path d="M 14 45 L 15.4 49 L 19.4 50.4 L 15.4 51.8 L 14 55.8 L 12.6 51.8 L 8.6 50.4 L 12.6 49 Z" fill="#1a1a1a" opacity="0.48"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 交叉的两步 -->
+  <path d="M 15 56 L 47 12 M 47 56 L 15 12" stroke="#1a1a1a" stroke-width="3.6" stroke-linecap="round"/>
+  <circle cx="15" cy="11" r="4.5" fill="#1a1a1a"/>
+  <circle cx="47" cy="11" r="4.5" fill="#1a1a1a"/>
+  <!-- 禁止角标 -->
+  <path fill="#1a1a1a" fill-rule="evenodd" d="M 47 36 a 11 11 0 1 1 0 22 a 11 11 0 1 1 0 -22 Z M 38.2 42.8 L 41.8 39.2 L 53.8 51.2 L 50.2 54.8 Z"/></svg>

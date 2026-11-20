@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 网 -->
+  <path d="M 6 42 L 58 42" stroke="#1a1a1a" stroke-width="2.4" stroke-dasharray="3 4" fill="none"/>
+  <path d="M 6 34 L 6 50 M 58 34 L 58 50" stroke="#1a1a1a" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- 下压的拦截箭头 -->
+  <path d="M 17 10 L 17 30 M 10 23 L 17 32 L 24 23" stroke="#1a1a1a" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 网前的球 -->
+  <circle cx="42" cy="20" r="9" fill="#1a1a1a"/></svg>

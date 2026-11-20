@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 旗杆与旗 -->
+  <path d="M 11 58 L 11 8" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 11 10 L 34 17 L 11 26 Z" fill="#1a1a1a"/>
+  <!-- 前冲箭头 -->
+  <path d="M 45 52 L 45 30 M 36 39 L 45 29 L 54 39" stroke="#1a1a1a" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>

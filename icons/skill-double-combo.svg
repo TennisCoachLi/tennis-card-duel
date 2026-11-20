@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 双箭头 -->
+  <path d="M 17 54 L 17 34 M 11 41 L 17 33 L 23 41" stroke="#1a1a1a" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 41 54 L 41 34 M 35 41 L 41 33 L 47 41" stroke="#1a1a1a" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 被连击的球 -->
+  <circle cx="29" cy="16" r="9" fill="#1a1a1a"/></svg>

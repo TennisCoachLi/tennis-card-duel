@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+  <!-- 非持拍侧的肩与颈 -->
+  <path d="M 4 22 Q 13 13 22 19" stroke="#1a1a1a" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <path d="M 4 33 Q 13 24 22 30" stroke="#1a1a1a" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <!-- 拍随挥到肩 -->
+  <ellipse cx="43" cy="41" rx="12" ry="14" fill="none" stroke="#1a1a1a" stroke-width="2.8"/>
+  <path d="M 34 32 L 23 21" stroke="#1a1a1a" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M 36 32 L 50 50 M 36 50 L 50 32" stroke="#1a1a1a" stroke-width="1.4" opacity="0.35"/>
+  <!-- 随挥轨迹 -->
+  <path d="M 56 52 Q 49 30 27 17" stroke="#1a1a1a" stroke-width="2.2" stroke-dasharray="4 4" fill="none" stroke-linecap="round" opacity="0.55"/></svg>
