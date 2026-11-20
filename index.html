@@ -246,8 +246,8 @@
         /* 图标底砖：深色印石面 + 顶部柔光 + 内阴影 —— 类别色在这里最抢眼 */
         .emblem-tile {
             position: relative;
-            width: 112px;
-            height: 112px;
+            width: 132px;
+            height: 132px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -256,7 +256,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            border-radius: 28px;
+            border-radius: 33px;
             background:
                 radial-gradient(120% 85% at 26% 12%, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, 0) 62%),
                 linear-gradient(155deg, var(--accent-lift, var(--ink)) 0%, var(--accent, var(--ink)) 44%, var(--accent-deep, var(--ink)) 100%);
@@ -269,8 +269,8 @@
         .icon-mask {
             position: relative;
             z-index: 1;
-            width: 78px;
-            height: 78px;
+            width: 96px;
+            height: 96px;
             background: linear-gradient(155deg, #fffdf6 0%, #ffffff 32%, #e7d4ac 66%, #fffaf0 100%);
             filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .38));
             -webkit-mask-image: var(--icon);
@@ -318,7 +318,8 @@
             text-align: center;
             color: var(--ink);
             padding: 0 6px;
-            min-height: 3.2em;
+            /* 按最长的一条规则（2 行）刚好装满 —— 全套卡片文字区等高，横向对齐 */
+            min-height: 3.5em;
             /* 允许教练复制规则文字去群里发 */
             -webkit-user-select: text;
             user-select: text;
@@ -345,7 +346,7 @@
             background: var(--paper);
             border: 1px dashed var(--paper-line);
             border-radius: var(--r-card);
-            min-height: 430px;
+            min-height: 455px;   /* 与卡面等高，抽卡时按钮不跳动 */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -404,7 +405,6 @@
         /* ========== 抽卡区 ========== */
         .stage {
             position: relative;
-            min-height: 430px;
             display: flex;
             align-items: stretch;
             justify-content: center;
@@ -704,9 +704,9 @@
         }
         .card--mini .card-player { font-size: 10px; padding: 3px 8px; }
         .card--mini .card-emblem { padding: 20px 0 0; flex: 0 0 auto; }
-        .card--mini .emblem-tile { width: 58px; height: 58px; }
-        .card--mini .emblem-tile::before { border-radius: 15px; }
-        .card--mini .icon-mask { width: 40px; height: 40px; }
+        .card--mini .emblem-tile { width: 66px; height: 66px; }
+        .card--mini .emblem-tile::before { border-radius: 17px; }
+        .card--mini .icon-mask { width: 48px; height: 48px; }
         .card--mini .card-name {
             font-size: 13px;
             margin: 8px 10px 0;
@@ -717,7 +717,8 @@
         .card--mini .card-rule {
             font-size: 11.5px;
             line-height: 1.6;
-            min-height: 0;
+            /* 最长的一条在图鉴宽度下占 5 行 */
+            min-height: 8em;
             padding: 0;
             color: var(--muted);
         }
@@ -739,15 +740,16 @@
         .card--duo .card-seal::after { inset: 3px; border-radius: 4px; }
         .card--duo .card-player { font-size: 10px; padding: 3px 8px; }
         .card--duo .card-emblem { padding: 40px 0 0; flex: 0 0 auto; }
-        .card--duo .emblem-tile { width: 70px; height: 70px; }
-        .card--duo .emblem-tile::before { border-radius: 18px; }
-        .card--duo .icon-mask { width: 48px; height: 48px; }
+        .card--duo .emblem-tile { width: 84px; height: 84px; }
+        .card--duo .emblem-tile::before { border-radius: 21px; }
+        .card--duo .icon-mask { width: 60px; height: 60px; }
         .card--duo .card-name { font-size: 15px; margin: 7px 10px 0; }
         .card--duo .card-diff { font-size: 11px; margin-top: 4px; letter-spacing: 1px; }
         .card--duo .card-rule-wrap { margin: 10px 12px 0; padding-top: 10px; }
-        .card--duo .card-rule { font-size: 12px; line-height: 1.62; min-height: 0; padding: 0; }
+        /* 最长的一条在对战宽度下占 3 行 */
+        .card--duo .card-rule { font-size: 12px; line-height: 1.62; min-height: 4.86em; padding: 0; }
         .card--duo .card-goal {
-            margin: auto 12px 14px;
+            margin: 10px 12px 14px;
             padding: 7px 9px;
             font-size: 10.5px;
         }
@@ -964,16 +966,16 @@
         @media (max-width: 380px) {
             .card-name { font-size: 19px; }
             .card-rule { font-size: 14px; }
-            .card-emblem img { width: 66px; height: 66px; }
-            .card-emblem { padding-top: 60px 0 0; }
+            .card-emblem { padding-top: 52px 0 0; }
             .btn { font-size: 15px; letter-spacing: 0; }
             .wrap { padding-left: 12px; padding-right: 12px; }
         }
         @media (min-width: 720px) {
-            .stage { min-height: 480px; }
-            .card-back { min-height: 480px; }
-            .card-emblem { padding-top: 64px 0 0; }
-            .card-emblem img { width: 88px; height: 88px; }
+            .card-back { min-height: 496px; }
+            .card-emblem { padding-top: 72px 0 0; }
+            .icon-mask { width: 112px; height: 112px; }
+            .emblem-tile { width: 152px; height: 152px; }
+            .emblem-tile::before { border-radius: 38px; }
             .card-name { font-size: 23px; }
             .card-rule { font-size: 16px; }
         }
