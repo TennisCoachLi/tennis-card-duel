@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>卡中探技 · 手机预览</title>
+<style>
+  body{margin:0;padding:20px;background:#f0f2f5;font-family:"PingFang SC",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 6px}
+  p{color:#666;font-size:13px;margin:0 0 18px;line-height:1.7}
+  .phones{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+  .ph{background:#fff;border:1px solid #ddd;border-radius:20px;padding:10px;
+      box-shadow:0 8px 24px -12px rgba(0,0,0,.35)}
+  .ph h2{font-size:12px;color:#888;text-align:center;margin:0 0 8px;font-weight:600}
+  iframe{border:0;display:block;border-radius:12px;background:#fff}
+</style>
+</head>
+<body>
+<h1>卡中探技 · 手机预览</h1>
+<p>三个尺寸并排对照。手机直接访问本页也可以，切到对应机型宽度看。<br>
+本页用 iframe 承载真实设备宽度 —— Chrome 桌面版强制最小 500px 视口，这是唯一的准确办法。</p>
+<div class="phones">
+  <div class="ph"><h2>iPhone SE · 375</h2><iframe src="index.html" width="375" height="700"></iframe></div>
+  <div class="ph"><h2>iPhone 14 · 390</h2><iframe src="index.html" width="390" height="844"></iframe></div>
+  <div class="ph"><h2>iPhone 14 Pro Max · 430</h2><iframe src="index.html" width="430" height="932"></iframe></div>
+</div>
+</body>
+</html>
