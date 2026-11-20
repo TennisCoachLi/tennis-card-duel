@@ -61,6 +61,11 @@
             -webkit-text-size-adjust: 100%;
         }
 
+        html {
+            /* iOS 橡皮筋：整页不做超橡皮筋 */
+            overscroll-behavior-y: none;
+        }
+
         body {
             font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
             background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%);
@@ -213,7 +218,10 @@
         .card-seal::after {
             content: "";
             position: absolute;
-            inset: 4px;
+            top: 4px;
+            right: 4px;
+            bottom: 4px;
+            left: 4px;
             border: 1.5px solid rgba(255, 255, 255, .55);
             border-radius: 6px;
             pointer-events: none;
@@ -255,7 +263,10 @@
         .emblem-tile::before {
             content: "";
             position: absolute;
-            inset: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
             border-radius: 33px;
             background:
                 radial-gradient(120% 85% at 26% 12%, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, 0) 62%),
@@ -451,7 +462,10 @@
         .skill-card.flipping::after {
             content: "";
             position: absolute;
-            inset: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
             border-radius: var(--r-card);
             background: linear-gradient(104deg, transparent 28%, rgba(255, 255, 255, .52) 45%, rgba(255, 255, 255, .10) 56%, transparent 72%);
             transform: translateX(-125%);
@@ -509,8 +523,11 @@
         .zoom-overlay {
             display: none;
             position: fixed;
-            inset: 0;
-            z-index: 200;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 150;
             background: rgba(28, 28, 30, .55);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -518,6 +535,8 @@
             justify-content: center;
             padding: 20px;
             -webkit-tap-highlight-color: transparent;
+            overscroll-behavior: contain;
+            touch-action: none;
         }
         .zoom-overlay.active { display: flex; }
         .zoom-overlay .card {
@@ -715,7 +734,10 @@
             border-radius: 7px;
         }
         .card--mini .card-seal::after {
-            inset: 3px;
+            top: 3px;
+            right: 3px;
+            bottom: 3px;
+            left: 3px;
             border-radius: 4px;
         }
         .card--mini .card-player { font-size: 10px; padding: 3px 8px; }
@@ -753,7 +775,13 @@
             font-size: 11px;
             border-radius: 7px;
         }
-        .card--duo .card-seal::after { inset: 3px; border-radius: 4px; }
+        .card--duo .card-seal::after {
+            top: 3px;
+            right: 3px;
+            bottom: 3px;
+            left: 3px;
+            border-radius: 4px;
+        }
         .card--duo .card-player { font-size: 10px; padding: 3px 8px; }
         .card--duo .card-emblem { padding: 40px 0 0; flex: 0 0 auto; }
         .card--duo .emblem-tile { width: 84px; height: 84px; }
@@ -774,11 +802,14 @@
         .modal-overlay {
             display: none;
             position: fixed;
-            inset: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
             background: rgba(28, 28, 30, .45);
             backdrop-filter: blur(3px);
             -webkit-backdrop-filter: blur(3px);
-            z-index: 80;
+            z-index: 200;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -947,7 +978,7 @@
             font-size: 15px;
             font-weight: 600;
             line-height: 1.6;
-            z-index: 100;
+            z-index: 300;
             opacity: 0;
             pointer-events: none;
             transition: opacity .22s ease, transform .22s ease;
@@ -957,6 +988,13 @@
         .toast.show {
             opacity: 1;
             transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* 放大查看时锁住背景滚动（iOS 需要 overflow:hidden 才不跟手滚） */
+        body.is-zoomed {
+            overflow: hidden;
+            touch-action: none;
+            overscroll-behavior: none;
         }
 
         /* ========== 页脚 ========== */
@@ -994,6 +1032,14 @@
             .emblem-tile::before { border-radius: 38px; }
             .card-name { font-size: 23px; }
             .card-rule { font-size: 16px; }
+        }
+
+        /* iOS：点按钮会留下 :focus-visible 环，用 :focus:not(:focus-visible) 消掉 */
+        .btn:focus:not(:focus-visible),
+        .tabs button:focus:not(:focus-visible),
+        .filters button:focus:not(:focus-visible),
+        .icon-picker button:focus:not(:focus-visible) {
+            outline: none;
         }
 
         /* ========== 降低动效偏好 ========== */
@@ -1772,6 +1818,8 @@ var ICON_URI = {
     // 10. 弹窗
     // ============================================================
     function openModal() {
+        /* 放大层遮罩会盖住弹窗，先关掉 */
+        if (zoomOverlay.classList.contains('active')) closeZoom();
         inputName.value = '';
         inputCategory.value = 'boost';
         inputDifficulty.value = '2';
@@ -1896,12 +1944,14 @@ var ICON_URI = {
         zoomSource = node;
         zoomOverlay.classList.add('active');
         zoomOverlay.setAttribute('aria-label', '放大查看：' + name);
+        document.body.classList.add('is-zoomed');
     }
 
     function closeZoom() {
         zoomOverlay.classList.remove('active');
         zoomCard.innerHTML = '';
         zoomSource = null;
+        document.body.classList.remove('is-zoomed');
     }
 
     [cardStudent, cardCoach].forEach(function (node) {
