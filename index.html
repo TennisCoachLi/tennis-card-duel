@@ -823,6 +823,30 @@
             border-radius: 8px;
         }
 
+        /* 机制标签 */
+        .card-tags {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow: hidden;
+            gap: 4px;
+            margin: 10px 22px 20px;
+            justify-content: center;
+        }
+        .card-tags span {
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: var(--r-pill);
+            background: rgba(28, 28, 30, .07);
+            color: #57575c;
+            white-space: nowrap;
+            flex: none;
+        }
+        .card--mini .card-tags { margin: 9px 10px 12px; }
+        .card--mini .card-tags span { font-size: 10.5px; padding: 2px 7px; }
+        .card--duo .card-tags { margin: 10px 12px 14px; }
+        .card--duo .card-tags span { font-size: 10px; padding: 2px 6px; }
+
         /* ===== 对战并排档：同一套卡面，尺寸档再收一档 ===== */
         .card--duo .card-head { padding: 10px 10px 0; }
         .card--duo .card-seal {
@@ -954,7 +978,7 @@
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             gap: 5px;
-            max-height: 172px;
+            max-height: 140px;
             overflow-y: auto;
             padding: 8px;
             border: 1px solid var(--border);
@@ -1001,6 +1025,136 @@
             font-size: 11.5px;
             color: var(--muted);
             margin-top: 6px;
+            line-height: 1.6;
+        }
+
+        /* ===== 机制标签选择器 ===== */
+        .tag-picker {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fbfaf6;
+            padding: 10px 11px;
+        }
+        .tag-dim {
+            margin-bottom: 8px;
+        }
+        .tag-dim:last-child { margin-bottom: 0; }
+        .tag-dim-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #8b8b90;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .tag-dim-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .tag-chip {
+            min-height: 30px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-pill);
+            background: #fff;
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+        }
+        .tag-chip:hover { border-color: #cfccc0; color: var(--ink); }
+        .tag-chip.on {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: #fff;
+        }
+        .tag-chip:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
+        .tag-chip.on:focus-visible { outline-color: var(--ink); }
+
+        /* ===== 相似卡候选面板 ===== */
+        .similar-box {
+            margin: 0 0 16px;
+            animation: similarIn .22s ease-out;
+            border: 1px solid #e8c98a;
+            background: #fffaf0;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .similar-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 9px;
+        }
+        .similar-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #8a5a00;
+        }
+        .similar-count {
+            font-size: 11px;
+            color: #a8865a;
+        }
+        .similar-list { display: flex; flex-direction: column; gap: 8px; }
+        .similar-item {
+            background: #fff;
+            border: 1px solid #f0dfc0;
+            border-radius: 9px;
+            padding: 9px 10px;
+        }
+        .similar-item-head {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 4px;
+        }
+        .similar-item-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+        .similar-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: var(--r-pill);
+            background: #f3e2c0;
+            color: #8a5a00;
+            white-space: nowrap;
+        }
+        .similar-badge.high { background: #e8b04a; color: #fff; }
+        .similar-rule {
+            font-size: 12px;
+            color: #57575c;
+            line-height: 1.6;
+        }
+        .similar-common {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .similar-common span {
+            font-size: 10.5px;
+            padding: 2px 7px;
+            border-radius: var(--r-pill);
+            background: #f3e2c0;
+            color: #7a4f00;
+        }
+        @keyframes similarIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .similar-foot {
+            font-size: 11.5px;
+            color: #8a6a30;
+            margin-top: 9px;
             line-height: 1.6;
         }
 
@@ -1163,6 +1317,7 @@
                 <div class="card-diff" role="img"></div>
                 <div class="card-rule-wrap"><div class="card-rule"></div></div>
                 <div class="card-goal"></div>
+                <div class="card-tags"></div>
             </article>
 
             <!-- 教练的卡 -->
@@ -1178,6 +1333,7 @@
                 <div class="card-diff" role="img"></div>
                 <div class="card-rule-wrap"><div class="card-rule"></div></div>
                 <div class="card-goal"></div>
+                <div class="card-tags"></div>
             </article>
         </div>
 
@@ -1225,6 +1381,16 @@
         <div class="modal-title" id="modalTitle">创作你的新技能</div>
         <div class="modal-subtitle">写一条场上能一眼看懂的规则，教练和学员都好用</div>
 
+        <!-- 相似卡候选面板：放在最上方，选完标签立刻能看到提醒 -->
+        <div class="similar-box" id="similarBox" hidden>
+            <div class="similar-head">
+                <span class="similar-title" id="similarTitle">可能重复的卡</span>
+                <span class="similar-count" id="similarCount"></span>
+            </div>
+            <div class="similar-list" id="similarList"></div>
+            <p class="similar-foot" id="similarFoot"></p>
+        </div>
+
         <div class="form-group">
             <label for="inputName">技能名称</label>
             <input type="text" id="inputName" placeholder="比如：超级上旋球" maxlength="12">
@@ -1252,10 +1418,19 @@
         </div>
 
         <div class="form-group">
+            <label>机制标签</label>
+            <div class="tag-picker" id="tagPicker"></div>
+            <p class="picker-hint">标签决定这张卡在场上「怎么打」。选完会实时比对已有卡，
+            发现机制相近的就提醒你 —— 避免不小心造出功能重复的卡。</p>
+        </div>
+
+        <div class="form-group">
             <label>卡面图标</label>
             <div class="icon-picker" id="iconPicker" role="listbox" aria-label="选择卡面图标"></div>
             <p class="picker-hint">图标按分类着色。找不到合适的？可以在比赛前找我单独定制一张。</p>
         </div>
+
+
 
         <div class="form-group">
             <label for="inputRule">技能规则</label>
@@ -1353,6 +1528,20 @@ var ICON_URI = {
         custom:  { name: '自定义', accent: '#a65a2e', lift: '#b06a3c', deep: '#663a1a', mark: 'icons/card-custom.svg' }
     };
 
+    /** 机制标签体系：用于建卡时识别「可能重复」的卡 */
+    var TAG_GROUPS = [
+        { dim: '动作', tags: ['正手','反手','截击','发球','挑高','上网','并步','交叉步','随挥','上旋','模仿','击掌','挥拍','回位'] },
+        { dim: '约束', tags: ['二跳','不落地','指定区域','连续','重赛','金身','换分','固定手法'] },
+        { dim: '对象', tags: ['自己','对手'], single: true },
+        { dim: '结果', tags: ['得分','减分','失误','免罚'], single: true }
+    ];
+
+    /** 标签 → 维度 的反查表 */
+    var TAG_DIM = {};
+    TAG_GROUPS.forEach(function (g) {
+        g.tags.forEach(function (t) { TAG_DIM[t] = g.dim; });
+    });
+
     // ============================================================
     // 2. 内置技能表
     //    字段：name / category / rule / icon / difficulty / goal
@@ -1361,91 +1550,91 @@ var ICON_URI = {
     // ============================================================
     var BUILTIN_SKILLS = [
         // ----- 增强卡（12） -----
-        { name: '五连击得分', category: 'boost', difficulty: 3, goal: '连续稳定击球', icon: 'icons/skill-combo5.svg',
+        { name: '五连击得分', category: 'boost', difficulty: 3, tags: ['连续', '自己', '得分'], goal: '连续稳定击球', icon: 'icons/skill-combo5.svg',
           rule: '连续击球入界5次，立刻得1分！' },
-        { name: '截击秒杀', category: 'boost', difficulty: 2, goal: '网前反应速度', icon: 'icons/skill-volley.svg',
+        { name: '截击秒杀', category: 'boost', difficulty: 2, tags: ['截击', '自己', '得分'], goal: '网前反应速度', icon: 'icons/skill-volley.svg',
           rule: '截击入界，立刻得1分！' },
-        { name: '完美挥拍', category: 'boost', difficulty: 2, goal: '完整挥拍动作', icon: 'icons/skill-perfect-swing.svg',
+        { name: '完美挥拍', category: 'boost', difficulty: 2, tags: ['挥拍', '自己', '免罚'], goal: '完整挥拍动作', icon: 'icons/skill-perfect-swing.svg',
           rule: '回合内击球用完整动作碰到球，不会丢分！' },
-        { name: '发球得分', category: 'boost', difficulty: 3, goal: '发球落点控制', icon: 'icons/skill-serve-score.svg',
+        { name: '发球得分', category: 'boost', difficulty: 3, tags: ['发球', '指定区域', '自己', '得分'], goal: '发球落点控制', icon: 'icons/skill-serve-score.svg',
           rule: '发球进指定区域，立刻得1分！' },
-        { name: '精准落点', category: 'boost', difficulty: 3, goal: '回球落点控制', icon: 'icons/skill-precise-spot.svg',
+        { name: '精准落点', category: 'boost', difficulty: 3, tags: ['指定区域', '自己', '得分'], goal: '回球落点控制', icon: 'icons/skill-precise-spot.svg',
           rule: '回合内打球进指定区域，立刻得1分！' },
-        { name: '重赛卡', category: 'boost', difficulty: 2, goal: '抗压与专注', icon: 'icons/skill-replay.svg',
+        { name: '重赛卡', category: 'boost', difficulty: 2, tags: ['重赛', '自己'], goal: '抗压与专注', icon: 'icons/skill-replay.svg',
           rule: '本回合丢分后可直接喊"重打"，该分重来（每局限1次）。' },
-        { name: '模仿秀', category: 'boost', difficulty: 3, goal: '观察对手动作', icon: 'icons/skill-mimic.svg',
+        { name: '模仿秀', category: 'boost', difficulty: 3, tags: ['模仿', '对手', '得分'], goal: '观察对手动作', icon: 'icons/skill-mimic.svg',
           rule: '本回合模仿对手上一次击球方式（正手/反手/截击）回球，成功得1分！' },
-        { name: '连击翻倍', category: 'boost', difficulty: 2, goal: '连续击球节奏', icon: 'icons/skill-double-combo.svg',
+        { name: '连击翻倍', category: 'boost', difficulty: 2, tags: ['连续', '自己', '得分'], goal: '连续击球节奏', icon: 'icons/skill-double-combo.svg',
           rule: '本回合连续完成2个有效击球，得2分！' },
-        { name: '击掌得分', category: 'boost', difficulty: 2, goal: '击球后回位', icon: 'icons/skill-high-five.svg',
+        { name: '击掌得分', category: 'boost', difficulty: 2, tags: ['击掌', '对手', '得分'], goal: '击球后回位', icon: 'icons/skill-high-five.svg',
           rule: '与对手击掌后，下一球入界得1分！' },
-        { name: '随挥合一', category: 'boost', difficulty: 3, goal: '随挥到位的完整性', icon: 'icons/skill-follow-through.svg',
+        { name: '随挥合一', category: 'boost', difficulty: 3, tags: ['随挥', '自己', '得分'], goal: '随挥到位的完整性', icon: 'icons/skill-follow-through.svg',
           rule: '本回合每次击球后球拍随挥到非持拍侧肩，完成得1分！' },
-        { name: '上旋高球', category: 'boost', difficulty: 4, goal: '上旋过网落点', icon: 'icons/skill-topspin.svg',
+        { name: '上旋高球', category: 'boost', difficulty: 4, tags: ['上旋', '自己', '得分'], goal: '上旋过网落点', icon: 'icons/skill-topspin.svg',
           rule: '本回合必须用上旋把球送过网且落点在己方半场之后，成功得1分！' },
-        { name: '网前拦截', category: 'boost', difficulty: 3, goal: '上网截击时机', icon: 'icons/skill-net-intercept.svg',
+        { name: '网前拦截', category: 'boost', difficulty: 3, tags: ['上网', '截击', '自己', '得分'], goal: '上网截击时机', icon: 'icons/skill-net-intercept.svg',
           rule: '本回合上网在发球线内截击入界得1分！' },
 
         // ----- 限制卡（11） -----
-        { name: '落地再打', category: 'limit', difficulty: 1, goal: '等球落地的判断', icon: 'icons/skill-bounce-twice.svg',
+        { name: '落地再打', category: 'limit', difficulty: 1, tags: ['二跳', '自己'], goal: '等球落地的判断', icon: 'icons/skill-bounce-twice.svg',
           rule: '球落地2次后才能击球！' },
-        { name: '正手专属', category: 'limit', difficulty: 1, goal: '底线正手动作', icon: 'icons/skill-forehand-only.svg',
+        { name: '正手专属', category: 'limit', difficulty: 1, tags: ['正手', '固定手法', '自己'], goal: '底线正手动作', icon: 'icons/skill-forehand-only.svg',
           rule: '只能用底线正手击球！' },
-        { name: '反手专属', category: 'limit', difficulty: 1, goal: '底线反手动作', icon: 'icons/skill-backhand-only.svg',
+        { name: '反手专属', category: 'limit', difficulty: 1, tags: ['反手', '固定手法', '自己'], goal: '底线反手动作', icon: 'icons/skill-backhand-only.svg',
           rule: '只能用底线反手击球！' },
-        { name: '不落地击球', category: 'limit', difficulty: 3, goal: '上升期击球', icon: 'icons/skill-no-bounce.svg',
+        { name: '不落地击球', category: 'limit', difficulty: 3, tags: ['不落地', '自己'], goal: '上升期击球', icon: 'icons/skill-no-bounce.svg',
           rule: '除发球/挑高球，球不落地就打！' },
-        { name: '定点得分', category: 'limit', difficulty: 2, goal: '指定区域落点', icon: 'icons/skill-fixed-spot.svg',
+        { name: '定点得分', category: 'limit', difficulty: 2, tags: ['指定区域', '自己', '得分'], goal: '指定区域落点', icon: 'icons/skill-fixed-spot.svg',
           rule: '只能打进球指定区域！' },
-        { name: '区域接球', category: 'limit', difficulty: 2, goal: '提前判断来球落点', icon: 'icons/skill-zone-receive.svg',
+        { name: '区域接球', category: 'limit', difficulty: 2, tags: ['指定区域', '自己'], goal: '提前判断来球落点', icon: 'icons/skill-zone-receive.svg',
           rule: '只能在指定区域接球！' },
-        { name: '禁区卡', category: 'limit', difficulty: 3, goal: '把对手逼向边线', icon: 'icons/skill-forbidden-zone.svg',
+        { name: '禁区卡', category: 'limit', difficulty: 3, tags: ['指定区域', '对手', '失误'], goal: '把对手逼向边线', icon: 'icons/skill-forbidden-zone.svg',
           rule: '指定对方半场一个区域，对手本回合球落入该区算失误！' },
-        { name: '二跳击球', category: 'limit', difficulty: 2, goal: '等第二跳的耐心', icon: 'icons/skill-second-bounce.svg',
+        { name: '二跳击球', category: 'limit', difficulty: 2, tags: ['二跳', '指定区域', '自己'], goal: '等第二跳的耐心', icon: 'icons/skill-second-bounce.svg',
           rule: '球落指定区域，必须等二跳再打！' },
-        { name: '先声夺人', category: 'limit', difficulty: 2, goal: '主动进攻意识', icon: 'icons/skill-first-blood.svg',
+        { name: '先声夺人', category: 'limit', difficulty: 2, tags: ['对手', '得分'], goal: '主动进攻意识', icon: 'icons/skill-first-blood.svg',
           rule: '本回合你率先得分则得2分（对手正常计分）！' },
-        { name: '二跳正手', category: 'limit', difficulty: 3, goal: '二跳后的正手发力', icon: 'icons/skill-second-bounce-forehand.svg',
+        { name: '二跳正手', category: 'limit', difficulty: 3, tags: ['正手', '二跳', '固定手法', '自己', '失误'], goal: '二跳后的正手发力', icon: 'icons/skill-second-bounce-forehand.svg',
           rule: '来球落地后必须等第二跳再用正手击出，抢第一跳算失误！' },
-        { name: '反手高吊', category: 'limit', difficulty: 3, goal: '反手挑高球过网', icon: 'icons/skill-backhand-lob.svg',
+        { name: '反手高吊', category: 'limit', difficulty: 3, tags: ['反手', '挑高', '固定手法', '自己', '得分'], goal: '反手挑高球过网', icon: 'icons/skill-backhand-lob.svg',
           rule: '本回合只能用反手挑高球过网，落地后场得1分！' },
 
         // ----- 封印卡（6） -----
-        { name: '封印擅长技能', category: 'seal', difficulty: 2, goal: '用非惯用手打', icon: 'icons/skill-seal-skill.svg',
+        { name: '封印擅长技能', category: 'seal', difficulty: 2, tags: ['对手'], goal: '用非惯用手打', icon: 'icons/skill-seal-skill.svg',
           rule: '限制对手用最拿手的技能！' },
-        { name: '螃蟹移动', category: 'seal', difficulty: 2, goal: '并步移动', icon: 'icons/skill-crab-step.svg',
+        { name: '螃蟹移动', category: 'seal', difficulty: 2, tags: ['并步', '固定手法', '自己'], goal: '并步移动', icon: 'icons/skill-crab-step.svg',
           rule: '只能用并步进行移动！' },
-        { name: '三而竭', category: 'seal', difficulty: 3, goal: '控制领先优势', icon: 'icons/skill-no-three.svg',
+        { name: '三而竭', category: 'seal', difficulty: 3, tags: ['连续', '自己'], goal: '控制领先优势', icon: 'icons/skill-no-three.svg',
           rule: '禁止连续赢得3分！' },
-        { name: '封印正手', category: 'seal', difficulty: 2, goal: '反手对抗', icon: 'icons/skill-seal-forehand.svg',
+        { name: '封印正手', category: 'seal', difficulty: 2, tags: ['反手', '固定手法', '对手'], goal: '反手对抗', icon: 'icons/skill-seal-forehand.svg',
           rule: '对手只能用反手击球！' },
-        { name: '封印反手', category: 'seal', difficulty: 2, goal: '正手对抗', icon: 'icons/skill-seal-backhand.svg',
+        { name: '封印反手', category: 'seal', difficulty: 2, tags: ['正手', '固定手法', '对手'], goal: '正手对抗', icon: 'icons/skill-seal-backhand.svg',
           rule: '对手只能用正手击球！' },
-        { name: '交叉步禁', category: 'seal', difficulty: 3, goal: '并步+小碎步', icon: 'icons/skill-no-cross-step.svg',
+        { name: '交叉步禁', category: 'seal', difficulty: 3, tags: ['交叉步', '并步', '固定手法', '自己'], goal: '并步+小碎步', icon: 'icons/skill-no-cross-step.svg',
           rule: '本回合禁止交叉步，只能用并步+小碎步移动！' },
 
         // ----- 减弱卡（7） -----
-        { name: '连续击球减分', category: 'weaken', difficulty: 3, goal: '打断对手连续击球', icon: 'icons/skill-combo-drain.svg',
+        { name: '连续击球减分', category: 'weaken', difficulty: 3, tags: ['连续', '对手', '减分'], goal: '打断对手连续击球', icon: 'icons/skill-combo-drain.svg',
           rule: '对手连续击球入界7次，立刻减1分！' },
-        { name: '截击入界减分', category: 'weaken', difficulty: 2, goal: '封住对手网前', icon: 'icons/skill-volley-drain.svg',
+        { name: '截击入界减分', category: 'weaken', difficulty: 2, tags: ['截击', '对手', '减分'], goal: '封住对手网前', icon: 'icons/skill-volley-drain.svg',
           rule: '对手截击入界，立刻减1分！' },
-        { name: '未挥拍减分', category: 'weaken', difficulty: 3, goal: '完整挥拍动作', icon: 'icons/skill-no-swing-drain.svg',
+        { name: '未挥拍减分', category: 'weaken', difficulty: 3, tags: ['挥拍', '对手', '减分'], goal: '完整挥拍动作', icon: 'icons/skill-no-swing-drain.svg',
           rule: '对手每回合有一次未挥拍完整，立刻减1分！' },
-        { name: '发球区域减分', category: 'weaken', difficulty: 3, goal: '压缩对手发球空间', icon: 'icons/skill-serve-zone-drain.svg',
+        { name: '发球区域减分', category: 'weaken', difficulty: 3, tags: ['发球', '指定区域', '对手', '减分'], goal: '压缩对手发球空间', icon: 'icons/skill-serve-zone-drain.svg',
           rule: '对手发球进特定区域，立刻减1分！' },
-        { name: '特定区域减分', category: 'weaken', difficulty: 2, goal: '站位封堵', icon: 'icons/skill-zone-drain.svg',
+        { name: '特定区域减分', category: 'weaken', difficulty: 2, tags: ['指定区域', '对手', '减分'], goal: '站位封堵', icon: 'icons/skill-zone-drain.svg',
           rule: '对手每打入特定区域一次，立刻减1分！' },
-        { name: '模仿击球减分', category: 'weaken', difficulty: 3, goal: '给对手出难题', icon: 'icons/skill-mimic-drain.svg',
+        { name: '模仿击球减分', category: 'weaken', difficulty: 3, tags: ['模仿', '对手', '减分'], goal: '给对手出难题', icon: 'icons/skill-mimic-drain.svg',
           rule: '对手模仿你上一次击球模式，立刻减1分！' },
-        { name: '未回位减分', category: 'weaken', difficulty: 2, goal: '击球后回位', icon: 'icons/skill-no-return-drain.svg',
+        { name: '未回位减分', category: 'weaken', difficulty: 2, tags: ['回位', '对手', '减分'], goal: '击球后回位', icon: 'icons/skill-no-return-drain.svg',
           rule: '对手击球后未回到准备姿势，立刻减1分！' },
 
         // ----- 特殊卡（3） -----
-        { name: '交换比分', category: 'special', difficulty: 1, goal: '比分管理', icon: 'icons/skill-swap-score.svg',
+        { name: '交换比分', category: 'special', difficulty: 1, tags: ['换分', '对手'], goal: '比分管理', icon: 'icons/skill-swap-score.svg',
           rule: '和对手交换比分，卡片使用后消失！' },
-        { name: '金身', category: 'special', difficulty: 3, goal: '防守与耐心', icon: 'icons/skill-golden-body.svg',
+        { name: '金身', category: 'special', difficulty: 3, tags: ['金身', '自己', '免罚'], goal: '防守与耐心', icon: 'icons/skill-golden-body.svg',
           rule: '本回合你只得分不丢分（你失误不算分，对手失误你得分）！' },
-        { name: '连胜奖励', category: 'special', difficulty: 3, goal: '建立连续得分', icon: 'icons/skill-streak-bonus.svg',
+        { name: '连胜奖励', category: 'special', difficulty: 3, tags: ['连续', '自己', '得分'], goal: '建立连续得分', icon: 'icons/skill-streak-bonus.svg',
           rule: '连续得2分后，下一分额外+1分！' }
     ];
 
@@ -1487,6 +1676,12 @@ var ICON_URI = {
     var galleryGrid  = el('galleryGrid');
     var galleryEmpty = el('galleryEmpty');
     var btnEmptyCreate = el('btnEmptyCreate');
+    var tagPicker    = el('tagPicker');
+    var similarBox   = el('similarBox');
+    var similarList  = el('similarList');
+    var similarTitle = el('similarTitle');
+    var similarCount = el('similarCount');
+    var similarFoot  = el('similarFoot');
 
     var modalOverlay = el('modalOverlay');
     var inputName     = el('inputName');
@@ -1653,6 +1848,23 @@ var ICON_URI = {
 
         var gl = root.querySelector('.card-goal');
         if (gl) gl.innerHTML = '<b>训练目标</b>　' + (card.goal || '—');
+
+        /* 机制标签：卡面只显示「动作 / 约束」两个维度，
+           「对象 / 结果」由分类印章与规则本身已能读出，不重复占位 */
+        var tw = root.querySelector('.card-tags');
+        if (tw) {
+            tw.innerHTML = '';
+            var shown = (card.tags || []).filter(function (t) {
+                var d = TAG_DIM[t];
+                return d === '动作' || d === '约束';
+            });
+            shown.slice(0, 3).forEach(function (t) {
+                var sp = document.createElement('span');
+                sp.textContent = t;
+                tw.appendChild(sp);
+            });
+            tw.style.display = shown.length ? '' : 'none';
+        }
     }
 
     /** 抽卡时从图标周围迸出光点 */
@@ -1691,7 +1903,8 @@ var ICON_URI = {
             '<h3 class="card-name"></h3>' +
             '<div class="card-diff" role="img"></div>' +
             '<div class="card-rule-wrap"><div class="card-rule"></div></div>' +
-            '<div class="card-goal"></div>';
+            '<div class="card-goal"></div>' +
+            '<div class="card-tags"></div>';
         fillCard(card, cat, card.isCustom ? '自建' : DIFF_LABEL[card.difficulty || 1], d);
         return d;
     }
@@ -1722,10 +1935,10 @@ var ICON_URI = {
         var customs = getCustomSkills();
         skillPool = BUILTIN_SKILLS.map(function (s) {
             return { name: s.name, category: s.category, rule: s.rule, icon: s.icon,
-                     difficulty: s.difficulty, goal: s.goal, isCustom: false };
+                     difficulty: s.difficulty, goal: s.goal, tags: s.tags || [], isCustom: false };
         }).concat(customs.map(function (s) {
             return { name: s.name, category: s.category, rule: s.rule, icon: s.icon,
-                     difficulty: s.difficulty, goal: s.goal, isCustom: true };
+                     difficulty: s.difficulty, goal: s.goal, tags: s.tags || [], isCustom: true };
         }));
 
         updateCustomCount(customs.length);
@@ -1888,7 +2101,137 @@ var ICON_URI = {
     }
 
     // ============================================================
-    // 10. 弹窗
+    // 10. 机制标签 & 相似卡检测
+    // ===========================================================
+
+    /** 当前选中的标签 */
+    var selectedTags = [];
+
+    /** 渲染标签选择器 */
+    function renderTagPicker() {
+        var box = el('tagPicker');
+        box.innerHTML = '';
+        TAG_GROUPS.forEach(function (g) {
+            var dim = document.createElement('div');
+            dim.className = 'tag-dim';
+            var lab = document.createElement('div');
+            lab.className = 'tag-dim-label';
+            lab.textContent = g.dim;
+            dim.appendChild(lab);
+            var opts = document.createElement('div');
+            opts.className = 'tag-dim-options';
+            g.tags.forEach(function (t) {
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'tag-chip';
+                b.textContent = t;
+                if (selectedTags.indexOf(t) >= 0) b.classList.add('on');
+                b.setAttribute('aria-pressed', selectedTags.indexOf(t) >= 0 ? 'true' : 'false');
+                b.addEventListener('click', function () {
+                    var i = selectedTags.indexOf(t);
+                    if (i >= 0) {
+                        selectedTags.splice(i, 1);
+                    } else {
+                        if (g.single) {
+                            // 单选维度：先清掉该维度其它标签
+                            selectedTags = selectedTags.filter(function (x) { return TAG_DIM[x] !== g.dim; });
+                        }
+                        selectedTags.push(t);
+                    }
+                    renderTagPicker();
+                    updateSimilar();
+                });
+                opts.appendChild(b);
+            });
+            dim.appendChild(opts);
+            box.appendChild(dim);
+        });
+    }
+
+    /**
+     * 找出与当前标签相似的已有卡。
+     * 分数 = 共同标签数 / 新卡标签数。
+     * ≥1.0 视为机制完全相同；≥0.6 视为可能相似。
+     */
+    function findSimilar(newTags) {
+        if (!newTags || !newTags.length) return [];
+        var pool = BUILTIN_SKILLS.concat(getCustomSkills());
+        var out = [];
+        pool.forEach(function (c) {
+            var ct = c.tags || [];
+            if (!ct.length) return;   // 老卡没标签，不参与比对
+            var common = newTags.filter(function (t) { return ct.indexOf(t) >= 0; });
+            if (!common.length) return;
+            var score = common.length / newTags.length;
+            if (score >= 0.6) {
+                out.push({ card: c, score: score, common: common });
+            }
+        });
+        out.sort(function (a, b) { return b.score - a.score; });
+        return out;
+    }
+
+    /** 更新相似卡面板 */
+    function updateSimilar() {
+        var box = el('similarBox');
+        var list = el('similarList');
+        var hits = findSimilar(selectedTags);
+
+        if (!hits.length) {
+            box.hidden = true;
+            return;
+        }
+        box.hidden = false;
+
+        var high = hits.filter(function (h) { return h.score >= 1; });
+        el('similarTitle').textContent = high.length
+            ? '⚠️ 有卡的机制和这张完全一样'
+            : '可能与已有的卡重复';
+        el('similarCount').textContent = '找到 ' + hits.length + ' 张';
+
+        list.innerHTML = '';
+        hits.slice(0, 5).forEach(function (h) {
+            var c = h.card;
+            var item = document.createElement('div');
+            item.className = 'similar-item';
+
+            var head = document.createElement('div');
+            head.className = 'similar-item-head';
+            var nm = document.createElement('span');
+            nm.className = 'similar-item-name';
+            nm.textContent = c.name;
+            head.appendChild(nm);
+            var badge = document.createElement('span');
+            badge.className = 'similar-badge' + (h.score >= 1 ? ' high' : '');
+            badge.textContent = h.score >= 1 ? '机制相同' : Math.round(h.score * 100) + '% 相同';
+            head.appendChild(badge);
+            item.appendChild(head);
+
+            var rule = document.createElement('div');
+            rule.className = 'similar-rule';
+            rule.textContent = c.rule;
+            item.appendChild(rule);
+
+            if (h.common.length) {
+                var cw = document.createElement('div');
+                cw.className = 'similar-common';
+                h.common.forEach(function (t) {
+                    var sp = document.createElement('span');
+                    sp.textContent = t;
+                    cw.appendChild(sp);
+                });
+                item.appendChild(cw);
+            }
+            list.appendChild(item);
+        });
+
+        el('similarFoot').textContent = high.length
+            ? '如果你想做的是同一件事，改用已有的卡会更好 —— 或者换个机制标签。'
+            : '机制有重叠但规则不同，两张卡可以共存 —— 你自己判断要不要都保留。';
+    }
+
+    // ============================================================
+    // 11. 弹窗
     // ============================================================
     function openModal() {
         /* 放大层遮罩会盖住弹窗，先关掉 */
@@ -1899,7 +2242,10 @@ var ICON_URI = {
         inputRule.value = '';
         inputGoal.value = '';
         selectedIcon = '';
+        selectedTags = [];
         renderIconPicker();
+        renderTagPicker();
+        similarBox.hidden = true;
         modalOverlay.classList.add('active');
         setTimeout(function () { inputName.focus(); }, 60);
     }
@@ -1984,6 +2330,7 @@ var ICON_URI = {
             goal: goal,
             difficulty: parseInt(inputDifficulty.value, 10) || 2,
             icon: selectedIcon,
+            tags: selectedTags.slice(),
             isCustom: true
         };
 
