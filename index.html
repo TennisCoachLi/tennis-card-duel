@@ -844,6 +844,59 @@
         }
         .card--mini .card-tags { margin: 9px 10px 12px; }
         .card--mini .card-tags span { font-size: 10.5px; padding: 2px 7px; }
+
+        /* 自建卡可点开编辑 */
+        .card--mini.is-editable { cursor: pointer; }
+        .card--mini.is-editable:hover {
+            border-color: #cfccc0;
+            box-shadow: 0 3px 12px -6px rgba(28, 28, 30, .3);
+        }
+        .card--mini.is-editable:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
+        /* 卡片右上角的编辑角标 */
+        .card-edit-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(28, 28, 30, .62);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .card-edit-badge svg { width: 12px; height: 12px; display: block; }
+        .card-view-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(28, 28, 30, .38);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .18s ease;
+        }
+        .card-view-badge svg { width: 12px; height: 12px; display: block; }
+        .card--mini.is-viewable { cursor: pointer; }
+        .card--mini.is-viewable:hover { border-color: #cfccc0; }
+        .card--mini.is-viewable:hover .card-view-badge { opacity: 1; }
+        .card--mini.is-viewable:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
         .card--duo .card-tags { margin: 10px 12px 14px; }
         .card--duo .card-tags span { font-size: 10px; padding: 2px 6px; }
 
@@ -1158,6 +1211,26 @@
             line-height: 1.6;
         }
 
+        .btn-delete {
+            display: block;
+            width: 100%;
+            min-height: 40px;
+            margin-top: 8px;
+            border: 1px solid #e8c4c0;
+            border-radius: var(--r-ctl);
+            background: #fff;
+            color: #b03a2e;
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-delete:hover { background: #fdf3f2; border-color: #d9a19a; }
+        .btn-delete:focus-visible {
+            outline: 2px solid #b03a2e;
+            outline-offset: 2px;
+        }
+
         .btn-close-modal {
             display: block;
             margin: 10px auto 0;
@@ -1173,6 +1246,97 @@
             outline: 2px solid var(--ink);
             outline-offset: 2px;
             border-radius: 6px;
+        }
+
+        /* ========== 内置卡只读详情 ========== */
+        .detail-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 210;
+            background: rgba(28, 28, 30, .45);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .detail-overlay.active { display: flex; }
+        .detail-box {
+            background: #fff;
+            border-radius: 18px;
+            padding: 20px 20px 16px;
+            width: 100%;
+            max-width: 380px;
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px -20px rgba(28, 28, 30, .5);
+            animation: modalIn .24s cubic-bezier(.22, 1, .36, 1) both;
+        }
+        .detail-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .detail-head .card-seal {
+            width: 48px;
+            height: 48px;
+            font-size: 13px;
+            border-radius: 9px;
+            transform: rotate(-6deg);
+            flex: none;
+        }
+        .detail-head .card-seal::after { inset: 4px; border-radius: 6px; }
+        .detail-title {
+            font-size: 19px;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+        .detail-diff {
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-top: 3px;
+        }
+        .detail-diff .off { color: #cfcabc; }
+        .detail-rule {
+            font-size: 15px;
+            line-height: 1.75;
+            padding: 13px 0;
+            border-top: 1px dashed var(--border);
+            border-bottom: 1px dashed var(--border);
+        }
+        .detail-goal {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 12px;
+            line-height: 1.7;
+        }
+        .detail-goal b { color: var(--ink); }
+        .detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 12px;
+        }
+        .detail-tags span {
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: var(--r-pill);
+            background: rgba(28, 28, 30, .07);
+            color: #57575c;
+        }
+        .detail-note {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 14px;
+            line-height: 1.65;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
         }
 
         /* ========== Toast ========== */
@@ -1379,7 +1543,7 @@
 <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal">
         <div class="modal-title" id="modalTitle">创作你的新技能</div>
-        <div class="modal-subtitle">写一条场上能一眼看懂的规则，教练和学员都好用</div>
+        <div class="modal-subtitle" id="modalSubtitle">写一条场上能一眼看懂的规则，教练和学员都好用</div>
 
         <!-- 相似卡候选面板：放在最上方，选完标签立刻能看到提醒 -->
         <div class="similar-box" id="similarBox" hidden>
@@ -1443,7 +1607,26 @@
         </div>
 
         <button class="btn-save" id="btnSave">保存技能</button>
+        <button class="btn-delete" id="btnDelete" hidden>删除这张卡</button>
         <button class="btn-close-modal" id="btnCloseModal">取消</button>
+    </div>
+</div>
+
+<!-- ===== 内置卡只读详情 ===== -->
+<div class="detail-overlay" id="detailOverlay" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="detail-box">
+        <div class="detail-head">
+            <div class="card-seal" id="detailSeal"><span></span></div>
+            <div>
+                <h3 class="detail-title" id="detailTitle"></h3>
+                <div class="detail-diff" id="detailDiff"></div>
+            </div>
+        </div>
+        <div class="detail-rule" id="detailRule"></div>
+        <div class="detail-goal" id="detailGoal"></div>
+        <div class="detail-tags" id="detailTags"></div>
+        <p class="detail-note" id="detailNote"></p>
+        <button class="btn-close-modal" id="btnCloseDetail">关闭</button>
     </div>
 </div>
 
@@ -1691,6 +1874,11 @@ var ICON_URI = {
     var inputGoal     = el('inputGoal');
     var btnSave       = el('btnSave');
     var btnCloseModal = el('btnCloseModal');
+    var btnDelete     = el('btnDelete');
+    var detailOverlay = el('detailOverlay');
+    var btnCloseDetail = el('btnCloseDetail');
+    var modalTitle    = el('modalTitle');
+    var modalSubtitle = el('modalSubtitle');
     var toastEl       = el('toast');
 
     // ============================================================
@@ -1906,6 +2094,48 @@ var ICON_URI = {
             '<div class="card-goal"></div>' +
             '<div class="card-tags"></div>';
         fillCard(card, cat, card.isCustom ? '自建' : DIFF_LABEL[card.difficulty || 1], d);
+
+        /* 内置卡：点开看详情（只读） */
+        if (!card.isCustom) {
+            d.classList.add('is-viewable');
+            d.setAttribute('role', 'button');
+            d.setAttribute('tabindex', '0');
+            d.setAttribute('aria-label', '查看技能卡：' + card.name);
+            var vb = document.createElement('span');
+            vb.className = 'card-view-badge';
+            vb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" ' +
+                'stroke-linecap="round" stroke-linejoin="round">' +
+                '<circle cx="10" cy="10" r="6"/><path d="M 15 15 L 20 20"/></svg>';
+            d.appendChild(vb);
+            d.addEventListener('click', function () { openDetail(card); });
+            d.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(card); }
+            });
+        }
+
+        /* 自建卡可点开编辑 */
+        if (card.isCustom) {
+            d.classList.add('is-editable');
+            d.setAttribute('role', 'button');
+            d.setAttribute('tabindex', '0');
+            d.setAttribute('aria-label', '编辑技能卡：' + card.name);
+            var badge = document.createElement('span');
+            badge.className = 'card-edit-badge';
+            badge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" ' +
+                'stroke-linecap="round" stroke-linejoin="round">' +
+                '<path d="M 4 20 L 4 16 L 15 5 L 19 9 L 8 20 Z"/>' +
+                '<path d="M 13 7 L 17 11"/></svg>';
+            d.appendChild(badge);
+            d.addEventListener('click', function () {
+                openModalFor(card.id);
+            });
+            d.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openModalFor(card.id);
+                }
+            });
+        }
         return d;
     }
 
@@ -1931,14 +2161,26 @@ var ICON_URI = {
         }
     }
 
+    /** 生成唯一 id（老卡没有 id 时按内容哈希补一个，保证稳定） */
+    function makeSkillId(skill) {
+        if (skill.id) return skill.id;
+        var base = (skill.name || '') + '|' + (skill.rule || '');
+        var h = 0;
+        for (var i = 0; i < base.length; i++) {
+            h = ((h << 5) - h + base.charCodeAt(i)) | 0;
+        }
+        return 'c' + Math.abs(h).toString(36) + '_' + base.length.toString(36);
+    }
+
     function loadSkillPool() {
         var customs = getCustomSkills();
         skillPool = BUILTIN_SKILLS.map(function (s) {
             return { name: s.name, category: s.category, rule: s.rule, icon: s.icon,
                      difficulty: s.difficulty, goal: s.goal, tags: s.tags || [], isCustom: false };
         }).concat(customs.map(function (s) {
-            return { name: s.name, category: s.category, rule: s.rule, icon: s.icon,
-                     difficulty: s.difficulty, goal: s.goal, tags: s.tags || [], isCustom: true };
+            return { id: makeSkillId(s), name: s.name, category: s.category, rule: s.rule,
+                     icon: s.icon, difficulty: s.difficulty, goal: s.goal,
+                     tags: s.tags || [], isCustom: true };
         }));
 
         updateCustomCount(customs.length);
@@ -2107,6 +2349,9 @@ var ICON_URI = {
     /** 当前选中的标签 */
     var selectedTags = [];
 
+    /** 编辑模式：null=新建，否则为正在编辑的自建卡 id */
+    var editingId = null;
+
     /** 渲染标签选择器 */
     function renderTagPicker() {
         var box = el('tagPicker');
@@ -2153,11 +2398,13 @@ var ICON_URI = {
      * 分数 = 共同标签数 / 新卡标签数。
      * ≥1.0 视为机制完全相同；≥0.6 视为可能相似。
      */
-    function findSimilar(newTags) {
+    function findSimilar(newTags, excludeId) {
         if (!newTags || !newTags.length) return [];
         var pool = BUILTIN_SKILLS.concat(getCustomSkills());
         var out = [];
         pool.forEach(function (c) {
+            /* 编辑时排除自己（改的是同一张卡，不该跟自己比） */
+            if (excludeId && makeSkillId(c) === excludeId) return;
             var ct = c.tags || [];
             if (!ct.length) return;   // 老卡没标签，不参与比对
             var common = newTags.filter(function (t) { return ct.indexOf(t) >= 0; });
@@ -2175,7 +2422,7 @@ var ICON_URI = {
     function updateSimilar() {
         var box = el('similarBox');
         var list = el('similarList');
-        var hits = findSimilar(selectedTags);
+        var hits = findSimilar(selectedTags, editingId);
 
         if (!hits.length) {
             box.hidden = true;
@@ -2234,18 +2481,43 @@ var ICON_URI = {
     // 11. 弹窗
     // ============================================================
     function openModal() {
+        openModalFor(null);
+    }
+
+    /** 打开弹窗。editId 为 null 表示新建，否则编辑该 id 的自建卡 */
+    function openModalFor(editId) {
         /* 放大层遮罩会盖住弹窗，先关掉 */
         if (zoomOverlay.classList.contains('active')) closeZoom();
-        inputName.value = '';
-        inputCategory.value = 'boost';
-        inputDifficulty.value = '2';
-        inputRule.value = '';
-        inputGoal.value = '';
-        selectedIcon = '';
-        selectedTags = [];
+
+        editingId = editId;
+        var skill = null;
+        if (editId) {
+            var found = getCustomSkills().filter(function (c) {
+                return makeSkillId(c) === editId;
+            });
+            skill = found[0] || null;
+        }
+
+        inputName.value = skill ? skill.name : '';
+        inputCategory.value = skill ? skill.category : 'boost';
+        inputDifficulty.value = skill ? String(skill.difficulty || 2) : '2';
+        inputRule.value = skill ? skill.rule : '';
+        inputGoal.value = skill ? (skill.goal || '') : '';
+        selectedIcon = skill ? (skill.icon || '') : '';
+        selectedTags = skill ? (skill.tags || []).slice() : [];
+
         renderIconPicker();
         renderTagPicker();
-        similarBox.hidden = true;
+        updateSimilar();
+
+        /* 弹窗标题与按钮随模式变 */
+        el('modalTitle').textContent = skill ? '编辑技能卡' : '创作你的新技能';
+        el('modalSubtitle').textContent = skill
+            ? '规则和描述改准确一点，场上更好判'
+            : '写一条场上能一眼看懂的规则，教练和学员都好用';
+        el('btnSave').textContent = skill ? '保存修改' : '保存技能';
+        el('btnDelete').hidden = !skill;
+
         modalOverlay.classList.add('active');
         setTimeout(function () { inputName.focus(); }, 60);
     }
@@ -2312,6 +2584,7 @@ var ICON_URI = {
 
     function closeModal() {
         modalOverlay.classList.remove('active');
+        editingId = null;
     }
 
     function saveCustomSkill() {
@@ -2323,7 +2596,7 @@ var ICON_URI = {
         if (!rule) { showToast('写一条场上能判定的规则吧'); inputRule.focus(); return; }
         if (!goal) { showToast('补一句训练目标，教练才知道这张卡练什么'); inputGoal.focus(); return; }
 
-        var newSkill = {
+        var payload = {
             name: name,
             category: inputCategory.value,
             rule: rule,
@@ -2335,11 +2608,80 @@ var ICON_URI = {
         };
 
         var customs = getCustomSkills();
-        customs.push(newSkill);
+        if (editingId) {
+            /* 编辑：按 id 找到并替换，保留原 id */
+            var idx = -1;
+            for (var i = 0; i < customs.length; i++) {
+                if (makeSkillId(customs[i]) === editingId) { idx = i; break; }
+            }
+            if (idx >= 0) {
+                payload.id = customs[idx].id || editingId;
+                customs[idx] = payload;
+            } else {
+                payload.id = editingId;
+                customs.push(payload);
+            }
+            saveCustomSkills(customs);
+            loadSkillPool();
+            closeModal();
+            showToast('「' + name + '」已更新');
+        } else {
+            /* 新建 */
+            payload.id = 'c' + Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36);
+            customs.push(payload);
+            saveCustomSkills(customs);
+            loadSkillPool();
+            closeModal();
+            showToast('新技能「' + name + '」加入成功');
+        }
+    }
+
+    /** 打开内置卡的只读详情 */
+    function openDetail(card) {
+        var cat = CATEGORIES[card.category] || CATEGORIES.boost;
+        var seal = el('detailSeal');
+        seal.style.setProperty('--accent', cat.accent);
+        seal.style.setProperty('--accent-lift', cat.lift);
+        seal.style.setProperty('--accent-deep', cat.deep);
+        seal.querySelector('span').textContent = cat.name;
+        el('detailTitle').textContent = card.name;
+        var df = el('detailDiff');
+        df.innerHTML = diffHTML(card.difficulty);
+        df.setAttribute('aria-label', '难度 ' + DIFF_LABEL[card.difficulty || 1]);
+        el('detailRule').textContent = card.rule;
+        el('detailGoal').innerHTML = '<b>训练目标</b>　' + (card.goal || '—');
+        var tw = el('detailTags');
+        tw.innerHTML = '';
+        (card.tags || []).forEach(function (t) {
+            var sp = document.createElement('span');
+            sp.textContent = t;
+            tw.appendChild(sp);
+        });
+        tw.style.display = (card.tags && card.tags.length) ? '' : 'none';
+        el('detailNote').textContent = '内置技能卡。想要改成自己的版本？' +
+            '可以在「＋ 新增技能卡」里按这个机制建一张，之后那张就能编辑了。';
+        el('detailOverlay').classList.add('active');
+    }
+
+    function closeDetail() {
+        el('detailOverlay').classList.remove('active');
+    }
+
+    /** 删除正在编辑的自建卡 */
+    function deleteEditingSkill() {
+        if (!editingId) return;
+        var customs = getCustomSkills();
+        var target = null;
+        for (var i = 0; i < customs.length; i++) {
+            if (makeSkillId(customs[i]) === editingId) { target = customs[i]; break; }
+        }
+        if (!target) { closeModal(); return; }
+        if (!confirm('确定删除「' + target.name + '」吗？此操作无法撤销。')) return;
+        customs = customs.filter(function (c) { return makeSkillId(c) !== editingId; });
         saveCustomSkills(customs);
         loadSkillPool();
         closeModal();
-        showToast('新技能「' + name + '」加入成功');
+        showToast('已删除「' + target.name + '」');
     }
 
     // ============================================================
@@ -2352,6 +2694,11 @@ var ICON_URI = {
     btnEmptyCreate.addEventListener('click', openModal);
     btnSave.addEventListener('click', saveCustomSkill);
     btnCloseModal.addEventListener('click', closeModal);
+    btnDelete.addEventListener('click', deleteEditingSkill);
+    btnCloseDetail.addEventListener('click', closeDetail);
+    detailOverlay.addEventListener('click', function (e) {
+        if (e.target === detailOverlay) closeDetail();
+    });
 
     modalOverlay.addEventListener('click', function (e) {
         if (e.target === modalOverlay) closeModal();
@@ -2429,6 +2776,7 @@ var ICON_URI = {
             saveCustomSkill();
         }
         if (e.key === 'Escape') {
+            if (detailOverlay.classList.contains('active')) closeDetail();
             if (modalOverlay.classList.contains('active')) closeModal();
             if (zoomOverlay.classList.contains('active')) closeZoom();
         }
